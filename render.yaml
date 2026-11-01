@@ -1,0 +1,34 @@
+# Render Blueprint: one web service runs the API and serves the React app.
+# Deploy later with "New > Blueprint" on render.com and point it at this repo.
+services:
+  - type: web
+    name: aegis
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    disk:
+      name: aegis-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: DATABASE_URL
+        value: file:/data/aegis.db
+      - key: WEB_DIST
+        value: /app/web/dist
+      - key: PAYPAL_ENV
+        value: sandbox
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: PAYPAL_WEBHOOK_ID
+        sync: false
+      - key: XAI_API_KEY
+        sync: false
+      - key: XAI_MODEL
+        value: grok-4
+      - key: WEB_ORIGIN
+        sync: false
+      - key: HOLD_TIMEOUT_MS
+        value: '900000'
