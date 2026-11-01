@@ -16,6 +16,7 @@ model User {
   seniorLinks   Guardian[] @relation("SeniorGuardians")
   guardianLogin Guardian[] @relation("GuardianProfile")
   mandates      Mandate[]
+  payees        Payee[]
 }
 
 model Guardian {
@@ -42,4 +43,17 @@ model Mandate {
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, version])
+}
+
+model Payee {
+  id             String   @id @default(cuid())
+  userId         String
+  displayName    String
+  normalizedName String
+  status         String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, normalizedName])
 }
