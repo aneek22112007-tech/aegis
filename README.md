@@ -58,3 +58,15 @@ Open http://localhost:5173/demo. The seed is Margaret, her daughter Priya, and t
 3. **Pay Officer James $1,900.** The note says it is urgent, secret, and about a grandson's bail. The result says it was stopped. In the Lure Log, select that row, download the report, and download the CSV.
 
 `npm test` checks the same three decisions. `npm run e2e` clicks through them in Chromium.
+
+## Limitations
+
+- A payment made inside the PayPal app is not visible to AEGIS, and it cannot be intercepted.
+- The seed is one household, Margaret and Priya. There is no login.
+- Trusted payees are rows in this database, not PayPal vault entries.
+- The report is a draft for https://reportfraud.ftc.gov. AEGIS does not file it.
+- Live guardian alerts stay in the memory of this server process.
+- A held payment is voided once when `HOLD_TIMEOUT_MS` elapses. The default is 15 minutes.
+- The practice merchant records a successful authorize, capture, or void. It does not move money.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for branches, commits, and checks.
