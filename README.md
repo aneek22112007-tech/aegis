@@ -70,3 +70,21 @@ Open http://localhost:5173/demo. The seed is Margaret, her daughter Priya, and t
 - The practice merchant records a successful authorize, capture, or void. It does not move money.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for branches, commits, and checks.
+
+## Screenshots
+
+![Home](docs/home.png)
+
+![Three demo payments](docs/demo.png)
+
+![Sent to the pharmacy](docs/sent.png)
+
+![Stopped before the money moved](docs/stopped.png)
+
+![Priya decides](docs/guardian.png)
+
+![Lure Log with the reasons](docs/lure-log.png)
+
+![Margaret's rules](docs/setup.png)
+
+![Home on a phone](docs/home-mobile.png)
