@@ -2,7 +2,7 @@
   "name": "aegis",
   "private": true,
   "type": "module",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "AI consent proxy that enforces a vulnerable person's own wishes on every PayPal transaction",
   "engines": {
     "node": ">=20"
