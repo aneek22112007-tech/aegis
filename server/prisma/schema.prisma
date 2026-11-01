@@ -110,3 +110,10 @@ model Report {
   createdAt DateTime @default(now())
   payment   Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
 }
+
+model WebhookEvent {
+  id         String   @id
+  eventType  String
+  payload    String
+  receivedAt DateTime @default(now())
+}
