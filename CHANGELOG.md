@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- A 3D landing page opens at `/`. Margaret's home moves to `/senior`.
+- Guardian and the Lure Log use a dashboard with KPIs, a risk chart, and dark and light themes.
+- The GitHub Pages build runs the full demo in the browser with a copy of the risk engine.
+- A Dockerfile and `render.yaml` run the server and the web build together.
+- GitHub Pages publishes the screens. The payment server still starts with `npm run dev`.
+
 ## 1.0.0
 
 - GitHub Actions runs lint, the typecheck, the unit tests, and the three browser demos.

@@ -2,8 +2,11 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vitest/config';
 
-// GitHub Pages serves the app from /aegis/; everything else uses the root.
-const base = process.env.VITE_BASE ?? '/';
+// GitHub Pages serves this repo at /aegis/ and runs the browser demo (no payment server).
+// Local dev and Playwright stay at /.
+const pages = process.env.GITHUB_PAGES === 'true';
+if (pages) process.env.VITE_DEMO_MODE ??= 'true';
+const base = process.env.VITE_BASE ?? (pages ? '/aegis/' : '/');
 
 export default defineConfig({
   base,
