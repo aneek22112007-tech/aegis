@@ -8,9 +8,22 @@ datasource db {
 }
 
 model User {
-  id        String   @id
-  name      String
-  email     String?
-  role      String
-  createdAt DateTime @default(now())
+  id            String     @id
+  name          String
+  email         String?
+  role          String
+  createdAt     DateTime   @default(now())
+  seniorLinks   Guardian[] @relation("SeniorGuardians")
+  guardianLogin Guardian[] @relation("GuardianProfile")
+}
+
+model Guardian {
+  id           String  @id @default(cuid())
+  seniorId     String
+  userId       String?
+  name         String
+  contact      String
+  relationship String
+  senior       User    @relation("SeniorGuardians", fields: [seniorId], references: [id], onDelete: Cascade)
+  user         User?   @relation("GuardianProfile", fields: [userId], references: [id])
 }
