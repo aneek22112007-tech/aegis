@@ -1,5 +1,5 @@
 import { Float, Lightformer, Environment, Sparkles, Line } from '@react-three/drei';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 
@@ -230,6 +230,9 @@ function Payments({ flash }: { flash: React.MutableRefObject<{ color: THREE.Colo
 function Scene() {
   const flash = useRef({ color: new THREE.Color('#34f5b0'), t: 0 });
   const tilt = useRef<THREE.Group>(null);
+  const viewport = useThree((state) => state.viewport);
+  // On wide screens keep the shield clear of the headline on the left.
+  const shift = viewport.aspect > 1.2 ? Math.min(viewport.width * 0.16, 1.6) : 0;
   useFrame((state, dt) => {
     if (!tilt.current) return;
     const { x, y } = state.pointer;
@@ -255,7 +258,7 @@ function Scene() {
           scale={[2, 6, 1]}
         />
       </Environment>
-      <group ref={tilt}>
+      <group ref={tilt} position={[shift, 0, 0]}>
         <Float speed={1.4} rotationIntensity={0.25} floatIntensity={0.5}>
           <Shield flash={flash} />
         </Float>
