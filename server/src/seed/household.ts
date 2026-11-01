@@ -1,4 +1,6 @@
 import type { PrismaClient } from '@prisma/client';
+import { heuristicCompile } from '../mandate/heuristic.js';
+import { summarizePolicy } from '../mandate/summary.js';
 import { normalizePayeeName } from '../payees/names.js';
 
 export const SENIOR_ID = 'user_margaret';
@@ -7,21 +9,6 @@ export const GUARDIAN_ID = 'guardian_priya';
 
 export const MANDATE_TEXT =
   "Never send more than $500 to anyone I haven't paid before. Always allow my pharmacy and my utility company. If someone says it's urgent and secret, block it and call my daughter.";
-
-export const SEEDED_POLICY = {
-  maxNewPayee: 500,
-  maxPerTxn: 2000,
-  dailyLimit: 2000,
-  alwaysAllow: ['CVS Pharmacy', 'City Utilities', 'pharmacy', 'utility'],
-  alwaysBlock: [] as string[],
-  scamKeywords: ['urgent', 'secret', 'bail', 'grandson', 'gift card', 'wire', 'irs', 'warrant'],
-  quietHours: { start: '22:00', end: '07:00' },
-  guardian: { name: 'Priya', contact: 'daughter' },
-  escalation: 'Ask Priya before the money moves.',
-};
-
-export const SEEDED_SUMMARY =
-  'AEGIS will not send more than $500 to someone Margaret has not paid before. CVS Pharmacy and City Utilities are always allowed. If a request is urgent and secret, it is blocked and Priya is called.';
 
 const PHARMACY_AMOUNTS = [
   32, 36, 40, 42, 44, 45, 46, 47, 48, 48, 49, 50, 51, 52, 54, 55, 42, 38, 46, 50,
@@ -60,13 +47,15 @@ export async function seedHousehold(prisma: PrismaClient): Promise<void> {
       relationship: 'daughter',
     },
   });
+  const guardian = { name: 'Priya', contact: 'daughter' };
+  const policy = heuristicCompile(MANDATE_TEXT, guardian);
   await prisma.mandate.create({
     data: {
       userId: SENIOR_ID,
       version: 1,
       rawText: MANDATE_TEXT,
-      policyJson: JSON.stringify(SEEDED_POLICY),
-      summary: SEEDED_SUMMARY,
+      policyJson: JSON.stringify(policy),
+      summary: summarizePolicy(policy),
       source: 'seed',
       active: true,
     },
