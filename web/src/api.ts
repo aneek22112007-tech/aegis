@@ -1,3 +1,9 @@
+import { DemoHttpError, demoRequest } from './demo/backend';
+import { subscribe, type GuardianEvent } from './demo/events';
+
+/** True when the app runs without a backend (GitHub Pages build). */
+export const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true';
+
 export type PaymentView = {
   id: string;
   payeeName: string;
@@ -52,7 +58,21 @@ export type PublicConfig = {
 
 type ErrorBody = { message?: string };
 
+async function demoCall<T>(path: string, init?: RequestInit): Promise<T> {
+  // Let the UI paint a "Checking…" state, like a real network round trip.
+  await new Promise((resolve) => setTimeout(resolve, 120));
+  try {
+    const body = typeof init?.body === 'string' ? (JSON.parse(init.body) as unknown) : undefined;
+    const response = demoRequest(init?.method ?? 'GET', path, body);
+    return (response.json ?? response.text) as T;
+  } catch (cause) {
+    if (cause instanceof DemoHttpError) throw new Error(cause.message);
+    throw cause;
+  }
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  if (DEMO_MODE) return demoCall<T>(path, init);
   const response = await fetch(path, {
     ...init,
     headers: {
@@ -131,13 +151,35 @@ export function runDemo(
   return request(`/api/demo/scenarios/${scenario}`, { method: 'POST' });
 }
 
-export async function downloadText(path: string, filename: string): Promise<void> {
+async function fetchBlob(path: string): Promise<Blob> {
+  if (DEMO_MODE) {
+    const text = await demoCall<string>(path);
+    return new Blob([text], { type: path.endsWith('.csv') ? 'text/csv' : 'text/plain' });
+  }
   const response = await fetch(path);
   if (!response.ok) {
     const body = (await response.json().catch(() => ({}))) as ErrorBody;
     throw new Error(body.message || 'That file is not ready.');
   }
-  const blob = await response.blob();
+  return response.blob();
+}
+
+export type { GuardianEvent };
+
+/** Live guardian events: SSE from the server, or the in-browser hub in demo mode. */
+export function subscribeGuardian(
+  onEvent: (event: GuardianEvent) => void,
+  onError: () => void,
+): () => void {
+  if (DEMO_MODE || typeof EventSource === 'undefined') return subscribe(onEvent);
+  const source = new EventSource('/api/guardian/events');
+  source.onmessage = (message) => onEvent(JSON.parse(String(message.data)) as GuardianEvent);
+  source.onerror = onError;
+  return () => source.close();
+}
+
+export async function downloadText(path: string, filename: string): Promise<void> {
+  const blob = await fetchBlob(path);
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
