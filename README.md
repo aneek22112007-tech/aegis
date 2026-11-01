@@ -27,3 +27,18 @@ flowchart TD
 ```
 
 The score adds up the amount, a new payee, velocity, drift from her history, quiet hours, and scam wording. An always-block list forces a void. An always-allow list keeps a trusted payee low unless the note itself looks like a scam. Below 35 is low, 35 to 69 is medium, and 70 or more is high. Grok may rewrite the sentences. It does not change the score.
+
+## PayPal sandbox
+
+AEGIS is the merchant app. Create the app in the PayPal developer dashboard and leave it on sandbox.
+
+1. Create a sandbox REST app. Copy the client id and secret into `.env` as `PAYPAL_CLIENT_ID` and `PAYPAL_CLIENT_SECRET`.
+2. Keep `PAYPAL_ENV=sandbox`.
+3. Create a sandbox personal account. On **Send money**, that account approves the PayPal button. The order is an authorization, not a capture. AEGIS captures or voids after the risk check.
+4. For webhooks, run `ngrok http 8787`.
+5. On the app, subscribe `https://<ngrok-host>/api/webhooks/paypal` to `PAYMENT.AUTHORIZATION.CREATED`, `PAYMENT.AUTHORIZATION.VOIDED`, and `PAYMENT.CAPTURE.COMPLETED`.
+6. Copy the webhook id into `PAYPAL_WEBHOOK_ID`.
+
+Leave the client id and secret empty to use the in-process practice merchant. The three buttons on `/demo` do not need a buyer. A payment from `/senior/pay` needs the sandbox app and the PayPal button.
+
+`XAI_API_KEY` and `XAI_MODEL` let Grok compile a mandate and rewrite reasons. With no key, compilation stays on this machine. Either way the model does not choose the outcome.
