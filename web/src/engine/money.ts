@@ -1,0 +1,18 @@
+export function dollarsToCents(amount: number): number {
+  if (!Number.isFinite(amount)) {
+    throw new Error('Amount is not a number');
+  }
+  return Math.round(amount * 100);
+}
+
+export function centsToDollars(cents: number): number {
+  return cents / 100;
+}
+
+export function formatUsd(cents: number): string {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(cents / 100);
+}
+
+export function formatUsdAmount(amount: number): string {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+}

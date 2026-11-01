@@ -1,3 +1,4 @@
+import { MemoryRouter } from 'react-router-dom';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { GuardianPage } from './GuardianPage';
@@ -67,7 +68,11 @@ describe('GuardianPage', () => {
       }
       return json({ alerts: [held] });
     });
-    render(<GuardianPage />);
+    render(
+      <MemoryRouter>
+        <GuardianPage />
+      </MemoryRouter>,
+    );
     expect(await screen.findByRole('heading', { name: /Helen Brooks/ })).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Approve' }));
     expect(await screen.findByText(/on its way to Helen Brooks/)).toBeTruthy();
@@ -79,7 +84,11 @@ describe('GuardianPage', () => {
 
   it('adds a card when a live alert arrives', async () => {
     fetchMock.mockResolvedValue(json({ alerts: [] }));
-    render(<GuardianPage />);
+    render(
+      <MemoryRouter>
+        <GuardianPage />
+      </MemoryRouter>,
+    );
     expect(await screen.findByText('No payments are waiting.')).toBeTruthy();
     await act(async () => {
       FakeEventSource.current?.onmessage?.({

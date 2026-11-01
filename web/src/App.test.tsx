@@ -1,21 +1,54 @@
 import { render, screen } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { App } from './App';
+import { MemoryRouter } from 'react-router-dom';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
+import { AppRoutes } from './App';
+
+beforeAll(() => {
+  vi.stubGlobal(
+    'IntersectionObserver',
+    class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+      takeRecords() {
+        return [];
+      }
+    },
+  );
+  vi.stubGlobal('matchMedia', (query: string) => ({
+    matches: query.includes('reduce'),
+    media: query,
+    addEventListener() {},
+    removeEventListener() {},
+    addListener() {},
+    removeListener() {},
+    onchange: null,
+    dispatchEvent: () => false,
+  }));
+});
 
 describe('App', () => {
-  beforeEach(() => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(() => new Promise(() => undefined)),
+  it('opens on the landing page with the static shield under reduced motion', async () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <AppRoutes />
+      </MemoryRouter>,
     );
+    expect(
+      await screen.findByRole('heading', { level: 1, name: /enforced before money moves/i }),
+    ).toBeTruthy();
+    expect(await screen.findByTestId('static-shield')).toBeTruthy();
+    expect(screen.getAllByRole('link', { name: /demo/i }).length).toBeGreaterThan(0);
   });
 
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
-  it('introduces AEGIS', () => {
-    render(<App />);
-    expect(screen.getByRole('heading', { name: /payments that follow your rules/i })).toBeTruthy();
+  it('keeps the senior home at /senior', async () => {
+    render(
+      <MemoryRouter initialEntries={['/senior']}>
+        <AppRoutes />
+      </MemoryRouter>,
+    );
+    expect(
+      await screen.findByRole('heading', { name: /payments that follow your rules/i }),
+    ).toBeTruthy();
   });
 });

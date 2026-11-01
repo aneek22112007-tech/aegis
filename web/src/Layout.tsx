@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import { DEMO_MODE } from './api';
 
 export function Layout({ children }: { children: ReactNode }) {
   const [contrast, setContrast] = useState(() => localStorage.getItem('aegis-contrast') === '1');
@@ -11,6 +12,8 @@ export function Layout({ children }: { children: ReactNode }) {
   }, [contrast]);
 
   useEffect(() => {
+    // The browser demo has no payment server to check.
+    if (DEMO_MODE) return;
     let cancel = false;
     fetch('/api/health', { headers: { Accept: 'application/json' } })
       .then((response) => {

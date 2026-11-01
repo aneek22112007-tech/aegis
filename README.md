@@ -6,7 +6,9 @@ A senior pays **through AEGIS**. AEGIS is the PayPal merchant: each payment is c
 
 Payments made directly in the PayPal app never reach AEGIS and cannot be intercepted.
 
-The screens are published at https://aneek22112007-tech.github.io/aegis/. GitHub Pages cannot run the payment server. The three payments still run on your computer with `npm run dev`.
+**Live demo:** https://aneek22112007-tech.github.io/aegis/ (runs entirely in your browser, no account or real money)
+
+![AEGIS landing page](docs/landing.png)
 
 ## Why it exists
 
@@ -53,13 +55,32 @@ cp .env.example .env
 npm run dev
 ```
 
-Open http://localhost:5173/demo. The seed is Margaret, her daughter Priya, and twenty past payments each to CVS Pharmacy and City Utilities. Her words are: never more than $500 to someone she has not paid before, always allow the pharmacy and the utility company, and block anything urgent and secret.
+Open http://localhost:5173 for the landing page, or http://localhost:5173/demo to run the payments. The seed is Margaret, her daughter Priya, and twenty past payments each to CVS Pharmacy and City Utilities. Her words are: never more than $500 to someone she has not paid before, always allow the pharmacy and the utility company, and block anything urgent and secret.
 
 1. **Pay CVS Pharmacy $48.** The result says it was sent. The Lure Log shows a low score.
 2. **Pay Helen Brooks $650.** The result waits. Open Guardian, then Approve to send it or Deny to stop it.
 3. **Pay Officer James $1,900.** The note says it is urgent, secret, and about a grandson's bail. The result says it was stopped. In the Lure Log, select that row, download the report, and download the CSV.
 
 `npm test` checks the same three decisions. `npm run e2e` clicks through them in Chromium.
+
+## Live demo mode
+
+The GitHub Pages build sets `VITE_DEMO_MODE=true`. The browser runs a copy of the same risk engine the server uses (a parity test keeps them in step) and a practice merchant. State lives in `localStorage`, and guardian alerts travel between tabs over a `BroadcastChannel`. **Start over** on the demo page resets it.
+
+```bash
+VITE_DEMO_MODE=true VITE_BASE=/aegis/ npm run build -w web
+```
+
+## Deploy the full server
+
+The `Dockerfile` builds the web app and the server into one image. The server serves the web build when `WEB_DIST` is set.
+
+```bash
+docker build -t aegis .
+docker run -p 8787:8787 -e PAYPAL_ENV=sandbox aegis
+```
+
+`render.yaml` describes the same image as a Render web service with a disk at `/data` for SQLite. Secrets such as `PAYPAL_CLIENT_SECRET` are marked `sync: false` and are set in the Render dashboard.
 
 ## Limitations
 
@@ -69,13 +90,26 @@ Open http://localhost:5173/demo. The seed is Margaret, her daughter Priya, and t
 - The report is a draft for https://reportfraud.ftc.gov. AEGIS does not file it.
 - Live guardian alerts stay in the memory of this server process.
 - A held payment is voided once when `HOLD_TIMEOUT_MS` elapses. The default is 15 minutes.
+- The Pages demo keeps everything in one browser. It never calls PayPal.
 - The practice merchant records a successful authorize, capture, or void. It does not move money.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for branches, commits, and checks.
 
 ## Screenshots
 
-![Home](docs/home.png)
+![Live risk engine on the landing page](docs/landing-risk-demo.png)
+
+![Guardian phone preview](docs/landing-guardian.png)
+
+![Guardian dashboard, dark](docs/dashboard-guardian.png)
+
+![Guardian dashboard, light](docs/dashboard-guardian-light.png)
+
+![Lure Log dashboard](docs/dashboard-lure-log.png)
+
+![Landing page on a phone](docs/landing-mobile.png)
+
+![Margaret's home](docs/home.png)
 
 ![Three demo payments](docs/demo.png)
 

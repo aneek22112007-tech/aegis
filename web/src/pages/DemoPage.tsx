@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { runDemo } from '../api';
+import { DEMO_MODE, runDemo } from '../api';
+import { resetState } from '../demo/store';
 
 const scenarios = [
   {
@@ -45,6 +46,30 @@ export function DemoPage() {
         These run through the same checks as a real payment. With no PayPal login on this machine,
         AEGIS uses a practice merchant and no money moves.
       </p>
+      {DEMO_MODE ? (
+        <p className="rounded-2xl border-4 border-[var(--line)] bg-[var(--card)] p-4">
+          This copy runs entirely in your browser. Open the{' '}
+          <a
+            className="underline"
+            href={`${import.meta.env.BASE_URL}guardian`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            guardian page
+          </a>{' '}
+          in another tab to watch alerts arrive live.{' '}
+          <button
+            type="button"
+            className="font-bold underline"
+            onClick={() => {
+              resetState();
+              setError('');
+            }}
+          >
+            Start over
+          </button>
+        </p>
+      ) : null}
       {error ? (
         <p role="alert" className="rounded-xl bg-[var(--danger)] px-4 py-3 font-bold text-white">
           {error}

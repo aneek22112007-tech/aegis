@@ -6,6 +6,7 @@ import { createGrokClient, type GrokClient } from './grok/client.js';
 import type { GuardianHub } from './guardian/hub.js';
 import { createHub } from './guardian/hub.js';
 import { errorHandler } from './http/errors.js';
+import { mountStaticWeb } from './http/staticWeb.js';
 import { createPaymentService, type PaymentService } from './payments/service.js';
 import { createPayPalClient } from './paypal/factory.js';
 import type { PayPalClient } from './paypal/types.js';
@@ -83,6 +84,7 @@ export function createApp(deps?: AppDeps) {
     );
   }
 
+  mountStaticWeb(app, process.env.WEB_DIST);
   app.use(errorHandler);
   return app;
 }
