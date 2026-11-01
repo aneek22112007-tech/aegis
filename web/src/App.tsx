@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Layout } from './Layout';
+import { AuditPage } from './pages/AuditPage';
 import { ConfirmPage } from './pages/ConfirmPage';
 import { DemoPage } from './pages/DemoPage';
 import { GuardianPage } from './pages/GuardianPage';
@@ -20,6 +21,7 @@ export function App() {
           <Route path="/setup" element={<SetupPage />} />
           <Route path="/setup/confirm" element={<ConfirmPage />} />
           <Route path="/guardian" element={<GuardianPage />} />
+          <Route path="/audit" element={<AuditPage />} />
           <Route path="/demo" element={<DemoPage />} />
           <Route path="*" element={<HomePage />} />
         </Routes>
