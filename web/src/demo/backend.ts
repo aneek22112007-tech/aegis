@@ -231,7 +231,12 @@ function route(state: DemoState, method: string, path: string, body: unknown): D
       status: 200,
       json: {
         senior: { id: 'user_margaret', name: 'Margaret' },
-        guardian: { id: 'guardian_priya', name: 'Priya', contact: 'daughter', relationship: 'daughter' },
+        guardian: {
+          id: 'guardian_priya',
+          name: 'Priya',
+          contact: 'daughter',
+          relationship: 'daughter',
+        },
         mandate: mandateOf(state),
         payees: state.payees,
       },
@@ -242,7 +247,8 @@ function route(state: DemoState, method: string, path: string, body: unknown): D
   }
   if (method === 'POST' && path === '/api/mandate/compile') {
     const text = String(input.text ?? '').trim();
-    if (text.length < 10) throw new DemoHttpError('Please write your wishes in a sentence or two.', 400);
+    if (text.length < 10)
+      throw new DemoHttpError('Please write your wishes in a sentence or two.', 400);
     state.mandateText = text;
     state.mandateVersion += 1;
     return { status: 201, json: { mandate: mandateOf(state) } };
@@ -287,16 +293,21 @@ function route(state: DemoState, method: string, path: string, body: unknown): D
   const match = path.match(/^\/api\/payments\/([\w-]+)(?:\/(authorize|approve|deny|report))?$/);
   if (match) {
     const [, id, action] = match;
-    if (method === 'GET' && !action) return { status: 200, json: { payment: viewOf(find(state, id)) } };
+    if (method === 'GET' && !action)
+      return { status: 200, json: { payment: viewOf(find(state, id)) } };
     if (method === 'POST' && action === 'authorize') {
       return { status: 200, json: { payment: viewOf(authorizeDemoPayment(state, id)) } };
     }
     if (method === 'POST' && (action === 'approve' || action === 'deny')) {
-      return { status: 200, json: { payment: viewOf(guardianDecide(state, id, action === 'approve')) } };
+      return {
+        status: 200,
+        json: { payment: viewOf(guardianDecide(state, id, action === 'approve')) },
+      };
     }
     if (method === 'GET' && action === 'report') {
       const payment = find(state, id);
-      if (payment.status !== 'voided') throw new DemoHttpError('There is no report for that payment.', 404);
+      if (payment.status !== 'voided')
+        throw new DemoHttpError('There is no report for that payment.', 404);
       const report = buildFtcReport({
         seniorName: 'Margaret',
         guardianName: GUARDIAN.name,

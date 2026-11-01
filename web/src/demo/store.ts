@@ -39,8 +39,12 @@ export function seedState(): DemoState {
       { id: 'payee_city', name: 'City Utilities', status: 'trusted' },
     ],
     history: {
-      'cvs pharmacy': [32, 36, 40, 42, 44, 45, 46, 47, 48, 48, 49, 50, 51, 52, 54, 55, 42, 38, 46, 50],
-      'city utilities': [88, 92, 90, 95, 86, 100, 84, 91, 89, 93, 87, 96, 90, 85, 94, 88, 91, 97, 86, 90],
+      'cvs pharmacy': [
+        32, 36, 40, 42, 44, 45, 46, 47, 48, 48, 49, 50, 51, 52, 54, 55, 42, 38, 46, 50,
+      ],
+      'city utilities': [
+        88, 92, 90, 95, 86, 100, 84, 91, 89, 93, 87, 96, 90, 85, 94, 88, 91, 97, 86, 90,
+      ],
     },
     mandateText: MANDATE_TEXT,
     mandateVersion: 1,
