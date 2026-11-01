@@ -478,6 +478,17 @@ export function createPaymentService(deps: PaymentServiceDeps) {
       return expired.length;
     },
 
+    async listHeld(): Promise<PaymentView[]> {
+      const rows = await deps.prisma.payment.findMany({
+        where: { userId: seniorId, status: 'held' },
+        include: { payee: true },
+        orderBy: { createdAt: 'desc' },
+      });
+      const views: PaymentView[] = [];
+      for (const row of rows) views.push(await present(row));
+      return views;
+    },
+
     async getPayment(id: string): Promise<PaymentView> {
       return present(await load(id));
     },
