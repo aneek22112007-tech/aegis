@@ -111,7 +111,11 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for branches, commits, and checks.
 
 ![Margaret's home](docs/home.png)
 
-![Three demo payments](docs/demo.png)
+![Guided demo: a held payment waits for Priya](docs/demo.png)
+
+![Demo: the scam is voided before capture](docs/demo-voided.png)
+
+![Demo on a phone](docs/demo-mobile.png)
 
 ![Sent to the pharmacy](docs/sent.png)
 

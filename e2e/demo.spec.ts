@@ -13,8 +13,8 @@ async function downloadText(page: Page, name: string): Promise<string> {
 
 test('pharmacy refill is sent and listed in the Lure Log', async ({ page }) => {
   await page.goto('/demo');
-  await page.getByRole('button', { name: 'Pay CVS Pharmacy $48' }).click();
-  await expect(page.getByRole('heading', { level: 1 })).toContainText(
+  await page.getByRole('button', { name: 'Run CVS Pharmacy $48' }).click();
+  await expect(page.getByRole('status')).toContainText(
     'Sent. $48.00 is on its way to CVS Pharmacy.',
   );
   await page.goto('/audit');
@@ -26,18 +26,25 @@ test('pharmacy refill is sent and listed in the Lure Log', async ({ page }) => {
 
 test('a new payee waits until the guardian approves', async ({ page }) => {
   await page.goto('/demo');
-  await page.getByRole('button', { name: 'Pay Helen Brooks $650' }).click();
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('Waiting');
-  await page.goto('/guardian');
-  await expect(page.getByRole('heading', { name: /Helen Brooks/ })).toBeVisible();
+  await page.getByRole('button', { name: 'Run Helen Brooks $650' }).click();
+  await expect(page.getByRole('status')).toContainText('Waiting');
   await page.getByRole('button', { name: 'Approve' }).click();
+  await expect(page.getByText('Approved by Priya')).toBeVisible();
   await expect(page.getByRole('status')).toContainText('on its way to Helen Brooks');
+});
+
+test('the guardian can deny a held payment from the demo', async ({ page }) => {
+  await page.goto('/demo');
+  await page.getByRole('button', { name: 'Run Helen Brooks $650' }).click();
+  await page.getByRole('button', { name: 'Deny' }).click();
+  await expect(page.getByText('Denied by Priya')).toBeVisible();
 });
 
 test('the bail message is stopped, blocked, and drafted as a report', async ({ page }) => {
   await page.goto('/demo');
-  await page.getByRole('button', { name: 'Pay Officer James $1,900' }).click();
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('Stopped');
+  await page.getByRole('button', { name: 'Run Officer James $1,900' }).click();
+  await expect(page.getByRole('status')).toContainText('Stopped');
+  await expect(page.getByText('Voided before capture').first()).toBeVisible();
   await page.goto('/audit');
   await page.getByText('Officer James', { exact: true }).first().click();
   await expect(page.getByRole('heading', { name: /Officer James/ })).toBeVisible();
