@@ -11,6 +11,7 @@ import { createPayPalClient } from './paypal/factory.js';
 import type { PayPalClient } from './paypal/types.js';
 import { createAuditRouter } from './routes/audit.js';
 import { createDemoRouter } from './routes/demo.js';
+import { createGuardianRouter } from './routes/guardian.js';
 import { createHouseholdRouter } from './routes/household.js';
 import { createMandateRouter } from './routes/mandate.js';
 import { createPaymentRouter } from './routes/payments.js';
@@ -69,6 +70,7 @@ export function createApp(deps?: AppDeps) {
     app.use('/api/mandate', createMandateRouter({ prisma: deps.prisma, grok }));
     app.use('/api/household', createHouseholdRouter(deps.prisma));
     app.use('/api/payments', createPaymentRouter(service));
+    app.use('/api/guardian', createGuardianRouter({ hub, service }));
     app.use('/api/demo', createDemoRouter(service));
     app.use('/api/audit', createAuditRouter(deps.prisma));
     app.use(

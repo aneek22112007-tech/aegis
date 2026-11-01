@@ -30,3 +30,33 @@ body {
   outline: 3px solid var(--focus);
   outline-offset: 3px;
 }
+
+html.contrast {
+  color-scheme: dark;
+  --bg: #000000;
+  --ink: #ffffff;
+  --muted: #ffffff;
+  --card: #000000;
+  --accent: #ffe14a;
+  --accent-ink: #000000;
+  --warn: #ffe14a;
+  --danger: #ff8a80;
+  --line: #ffffff;
+  --focus: #ffe14a;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -6rem;
+  z-index: 20;
+  border-radius: 0.75rem;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 700;
+  padding: 0.75rem 1rem;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
