@@ -3,11 +3,26 @@ import { Link } from 'react-router-dom';
 
 export function Layout({ children }: { children: ReactNode }) {
   const [contrast, setContrast] = useState(() => localStorage.getItem('aegis-contrast') === '1');
+  const [offline, setOffline] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.toggle('contrast', contrast);
     localStorage.setItem('aegis-contrast', contrast ? '1' : '0');
   }, [contrast]);
+
+  useEffect(() => {
+    let cancel = false;
+    fetch('/api/health', { headers: { Accept: 'application/json' } })
+      .then((response) => {
+        if (!cancel && !response.ok) setOffline(true);
+      })
+      .catch(() => {
+        if (!cancel) setOffline(true);
+      });
+    return () => {
+      cancel = true;
+    };
+  }, []);
 
   return (
     <div className="min-h-screen">
@@ -37,6 +52,16 @@ export function Layout({ children }: { children: ReactNode }) {
           </button>
         </div>
       </header>
+      {offline ? (
+        <p role="status" className="border-b-4 border-[var(--warn)] bg-[var(--card)] px-6 py-4">
+          This site shows the screens only. The payment server is not running, so money cannot be
+          sent from here. On your computer, run npm install and npm run dev, then open{' '}
+          <a className="font-bold underline" href="http://localhost:5173/demo">
+            http://localhost:5173/demo
+          </a>
+          .
+        </p>
+      ) : null}
       <main id="main">{children}</main>
     </div>
   );
