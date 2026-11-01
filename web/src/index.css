@@ -60,3 +60,9 @@ html.contrast {
 .skip-link:focus {
   top: 1rem;
 }
+
+@media (max-width: 640px) {
+  header .ml-auto {
+    margin-left: 0;
+  }
+}
