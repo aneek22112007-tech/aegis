@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.0
+
+- GitHub Actions runs lint, the typecheck, the unit tests, and the three browser demos.
+- The README covers the sandbox app, the buyer account, the ngrok webhook, and the demo script.
+- Screenshots of the home screen, the demo, Priya's alert, and the Lure Log are in `docs/`.
+
 ## 0.2.0
 
 - PayPal orders are created with intent AUTHORIZE. Low risk captures, medium risk holds for the guardian, and high risk voids before capture.
