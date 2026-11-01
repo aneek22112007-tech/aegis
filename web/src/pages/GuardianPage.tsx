@@ -16,10 +16,13 @@ export function GuardianPage() {
       .then((body) => {
         if (gone) return;
         setAlerts(body.alerts);
+        const waiting = body.alerts.length;
         setStatus(
-          body.alerts.length === 0
+          waiting === 0
             ? 'Nothing is waiting. Margaret is all set.'
-            : `${body.alerts.length} payment${body.alerts.length === 1 ? '' : 's'} need a decision.`,
+            : waiting === 1
+              ? '1 payment needs a decision.'
+              : `${waiting} payments need a decision.`,
         );
       })
       .catch((cause: unknown) => {
