@@ -7,6 +7,10 @@ dist/
 .DS_Store
 prisma/*.db
 prisma/*.db-journal
+server/prisma/*.db
+server/prisma/*.db-journal
+server/prisma/*.db-wal
+server/prisma/*.db-shm
 playwright-report/
 test-results/
 blob-report/
