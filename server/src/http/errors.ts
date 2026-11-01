@@ -1,5 +1,6 @@
 import type { ErrorRequestHandler } from 'express';
 import { ZodError } from 'zod';
+import { PayPalError } from '../paypal/errors.js';
 
 export const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
   if (error instanceof ZodError) {
@@ -7,6 +8,10 @@ export const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
       message: 'Please check that and try again.',
       issues: error.issues.map((issue) => issue.message),
     });
+    return;
+  }
+  if (error instanceof PayPalError) {
+    res.status(error.status).json({ message: error.message });
     return;
   }
   const message = error instanceof Error ? error.message : 'request failed';

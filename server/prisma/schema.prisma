@@ -78,6 +78,7 @@ model Payment {
   paypalCaptureId String?
   idempotencyKey  String?   @unique
   holdExpiresAt   DateTime?
+  resolution      String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
