@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.0
+
+- PayPal orders are created with intent AUTHORIZE. Low risk captures, medium risk holds for the guardian, and high risk voids before capture.
+- A missing PayPal login uses an in-process practice merchant, so the three demo payments still decide.
+- Priya sees a live alert, then approves or denies. A held payment voids once when the window ends.
+- Margaret's screens use large type, plain language, and read-aloud. The Lure Log exports CSV and an FTC-style draft.
+
 ## 0.1.0
 
 - The server and web app build as npm workspaces.
