@@ -100,7 +100,7 @@ export function AuditPage() {
         </p>
       ) : null}
       {notice ? <p role="status">{notice}</p> : null}
-      <div className="h-[32rem] w-full" data-testid="lure-log-grid">
+      <div className="h-72 w-full" data-testid="lure-log-grid">
         <AgGridReact<AuditRow>
           theme={theme}
           rowData={visible}
