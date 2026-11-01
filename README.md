@@ -42,3 +42,19 @@ AEGIS is the merchant app. Create the app in the PayPal developer dashboard and 
 Leave the client id and secret empty to use the in-process practice merchant. The three buttons on `/demo` do not need a buyer. A payment from `/senior/pay` needs the sandbox app and the PayPal button.
 
 `XAI_API_KEY` and `XAI_MODEL` let Grok compile a mandate and rewrite reasons. With no key, compilation stays on this machine. Either way the model does not choose the outcome.
+
+## Demo script
+
+```bash
+npm install
+cp .env.example .env
+npm run dev
+```
+
+Open http://localhost:5173/demo. The seed is Margaret, her daughter Priya, and twenty past payments each to CVS Pharmacy and City Utilities. Her words are: never more than $500 to someone she has not paid before, always allow the pharmacy and the utility company, and block anything urgent and secret.
+
+1. **Pay CVS Pharmacy $48.** The result says it was sent. The Lure Log shows a low score.
+2. **Pay Helen Brooks $650.** The result waits. Open Guardian, then Approve to send it or Deny to stop it.
+3. **Pay Officer James $1,900.** The note says it is urgent, secret, and about a grandson's bail. The result says it was stopped. In the Lure Log, select that row, download the report, and download the CSV.
+
+`npm test` checks the same three decisions. `npm run e2e` clicks through them in Chromium.
