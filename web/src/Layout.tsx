@@ -19,9 +19,12 @@ export function Layout({ children }: { children: ReactNode }) {
           <Link to="/" className="text-2xl font-bold">
             AEGIS
           </Link>
-          <nav aria-label="Sections" className="flex flex-wrap gap-4">
-            <Link to="/">Home</Link>
+          <nav aria-label="Sections" className="flex w-full flex-wrap gap-x-4 gap-y-2 sm:w-auto">
+            <Link to="/senior">Home</Link>
+            <Link to="/senior/pay">Send money</Link>
+            <Link to="/setup">My rules</Link>
             <Link to="/guardian">Guardian</Link>
+            <Link to="/demo">Demo</Link>
           </nav>
           <button
             type="button"
