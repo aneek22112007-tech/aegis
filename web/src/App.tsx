@@ -100,9 +100,9 @@ export function AppRoutes() {
       <Route
         path="/demo"
         element={
-          <Senior>
+          <Suspense fallback={<Loading />}>
             <DemoPage />
-          </Senior>
+          </Suspense>
         }
       />
       <Route
