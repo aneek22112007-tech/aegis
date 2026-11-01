@@ -83,6 +83,7 @@ model Payment {
   user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   payee           Payee?       @relation(fields: [payeeId], references: [id])
   auditEvents     AuditEvent[]
+  report          Report?
 
   @@index([userId, createdAt])
   @@index([status, holdExpiresAt])
@@ -100,4 +101,12 @@ model AuditEvent {
   payment   Payment? @relation(fields: [paymentId], references: [id])
 
   @@index([paymentId, createdAt])
+}
+
+model Report {
+  id        String   @id @default(cuid())
+  paymentId String   @unique
+  body      String
+  createdAt DateTime @default(now())
+  payment   Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
 }
