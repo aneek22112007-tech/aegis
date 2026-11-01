@@ -11,7 +11,8 @@ COPY web/package.json web/
 COPY server/prisma server/prisma
 RUN npm ci
 COPY . .
-RUN npm run build -w server && npm run build -w web && npm prune --omit=dev
+# Keep dev deps: the prisma CLI runs "migrate deploy" at start-up.
+RUN npm run build -w server && npm run build -w web
 
 FROM node:20-bookworm-slim AS runtime
 WORKDIR /app
