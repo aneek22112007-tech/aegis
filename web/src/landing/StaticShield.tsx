@@ -2,7 +2,12 @@
 export function StaticShield() {
   return (
     <div className="absolute inset-0 flex items-center justify-center" data-testid="static-shield">
-      <svg viewBox="0 0 400 400" className="h-[70%] max-h-[460px] w-auto" role="img" aria-label="AEGIS shield">
+      <svg
+        viewBox="0 0 400 400"
+        className="h-[70%] max-h-[460px] w-auto"
+        role="img"
+        aria-label="AEGIS shield"
+      >
         <defs>
           <linearGradient id="sg" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" stopColor="#123c3d" />
@@ -27,7 +32,14 @@ export function StaticShield() {
           strokeWidth="4"
           filter="url(#glow)"
         />
-        <path d="M160 195 L190 225 L245 165" fill="none" stroke="#b8fff0" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
+        <path
+          d="M160 195 L190 225 L245 165"
+          fill="none"
+          stroke="#b8fff0"
+          strokeWidth="10"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
     </div>
   );

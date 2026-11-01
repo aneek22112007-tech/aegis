@@ -247,7 +247,13 @@ function Scene() {
       <Environment resolution={128}>
         <Lightformer form="rect" intensity={3} position={[0, 3, 4]} scale={[8, 2, 1]} />
         <Lightformer form="ring" intensity={2} color="#40ffd0" position={[-4, 0, 3]} scale={2} />
-        <Lightformer form="rect" intensity={1.5} color="#7c8cff" position={[4, -1, 2]} scale={[2, 6, 1]} />
+        <Lightformer
+          form="rect"
+          intensity={1.5}
+          color="#7c8cff"
+          position={[4, -1, 2]}
+          scale={[2, 6, 1]}
+        />
       </Environment>
       <group ref={tilt}>
         <Float speed={1.4} rotationIntensity={0.25} floatIntensity={0.5}>
@@ -255,7 +261,14 @@ function Scene() {
         </Float>
         <Payments flash={flash} />
       </group>
-      <Sparkles count={70} scale={[12, 6, 4]} size={1.6} speed={0.25} color="#8ff7e0" opacity={0.5} />
+      <Sparkles
+        count={70}
+        scale={[12, 6, 4]}
+        size={1.6}
+        speed={0.25}
+        color="#8ff7e0"
+        opacity={0.5}
+      />
     </>
   );
 }

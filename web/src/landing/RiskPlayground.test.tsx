@@ -6,10 +6,32 @@ const noon = new Date(2026, 5, 2, 12, 0, 0);
 
 describe('RiskPlayground', () => {
   it('scores the three demo payments with the real engine', () => {
-    expect(scorePlayground({ payee: 'CVS Pharmacy', amount: 48, note: 'Prescription refill', status: 'trusted', now: noon }).level).toBe('LOW');
-    expect(scorePlayground({ payee: 'Helen Brooks', amount: 650, note: 'Birthday gift', status: 'unknown', now: noon }).level).toBe('MEDIUM');
     expect(
-      scorePlayground({ payee: 'Officer James', amount: 1900, note: 'URGENT keep this secret, your grandson needs bail', status: 'unknown', now: noon }).level,
+      scorePlayground({
+        payee: 'CVS Pharmacy',
+        amount: 48,
+        note: 'Prescription refill',
+        status: 'trusted',
+        now: noon,
+      }).level,
+    ).toBe('LOW');
+    expect(
+      scorePlayground({
+        payee: 'Helen Brooks',
+        amount: 650,
+        note: 'Birthday gift',
+        status: 'unknown',
+        now: noon,
+      }).level,
+    ).toBe('MEDIUM');
+    expect(
+      scorePlayground({
+        payee: 'Officer James',
+        amount: 1900,
+        note: 'URGENT keep this secret, your grandson needs bail',
+        status: 'unknown',
+        now: noon,
+      }).level,
     ).toBe('HIGH');
   });
 
@@ -23,7 +45,9 @@ describe('RiskPlayground', () => {
     render(<RiskPlayground now={noon} />);
     fireEvent.click(screen.getByRole('button', { name: 'Pharmacy refill' }));
     expect(screen.getByTestId('risk-result').textContent).toContain('Captured silently');
-    fireEvent.change(screen.getByLabelText('Payment note'), { target: { value: 'URGENT and secret: buy a gift card' } });
+    fireEvent.change(screen.getByLabelText('Payment note'), {
+      target: { value: 'URGENT and secret: buy a gift card' },
+    });
     expect(screen.getByTestId('risk-result').textContent).not.toContain('Captured silently');
   });
 

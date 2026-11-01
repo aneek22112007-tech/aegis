@@ -9,12 +9,26 @@ const POLICY = heuristicCompile(MANDATE_TEXT, { name: 'Priya', contact: 'daughte
 
 const HISTORY: Record<string, number[]> = {
   'cvs pharmacy': [32, 36, 40, 42, 44, 45, 46, 47, 48, 48, 49, 50, 51, 52, 54, 55, 42, 38, 46, 50],
-  'city utilities': [88, 92, 90, 95, 86, 100, 84, 91, 89, 93, 87, 96, 90, 85, 94, 88, 91, 97, 86, 90],
+  'city utilities': [
+    88, 92, 90, 95, 86, 100, 84, 91, 89, 93, 87, 96, 90, 85, 94, 88, 91, 97, 86, 90,
+  ],
 };
 
 const PRESETS = [
-  { label: 'Pharmacy refill', payee: 'CVS Pharmacy', amount: '48', note: 'Prescription refill', status: 'trusted' as const },
-  { label: 'New person, $650', payee: 'Helen Brooks', amount: '650', note: 'Birthday gift', status: 'unknown' as const },
+  {
+    label: 'Pharmacy refill',
+    payee: 'CVS Pharmacy',
+    amount: '48',
+    note: 'Prescription refill',
+    status: 'trusted' as const,
+  },
+  {
+    label: 'New person, $650',
+    payee: 'Helen Brooks',
+    amount: '650',
+    note: 'Birthday gift',
+    status: 'unknown' as const,
+  },
   {
     label: 'Bail scam',
     payee: 'Officer James',
@@ -57,7 +71,13 @@ function Gauge({ score, color }: { score: number; color: string }) {
   const length = Math.PI * r;
   return (
     <svg viewBox="0 0 180 110" className="w-full max-w-[260px]" aria-hidden="true">
-      <path d="M20 95 A70 70 0 0 1 160 95" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="14" strokeLinecap="round" />
+      <path
+        d="M20 95 A70 70 0 0 1 160 95"
+        fill="none"
+        stroke="rgba(255,255,255,0.1)"
+        strokeWidth="14"
+        strokeLinecap="round"
+      />
       <path
         d="M20 95 A70 70 0 0 1 160 95"
         fill="none"
@@ -95,7 +115,11 @@ export function RiskPlayground({ now }: { now?: Date }) {
 
   return (
     <div className="grid gap-6 rounded-3xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-xl md:grid-cols-[1.1fr_1fr] md:p-8">
-      <form className="flex flex-col gap-4" onSubmit={(event) => event.preventDefault()} aria-label="Try the risk engine">
+      <form
+        className="flex flex-col gap-4"
+        onSubmit={(event) => event.preventDefault()}
+        aria-label="Try the risk engine"
+      >
         <div className="flex flex-wrap gap-2">
           {PRESETS.map((preset) => (
             <button
@@ -119,11 +143,20 @@ export function RiskPlayground({ now }: { now?: Date }) {
         </label>
         <label className="flex flex-col gap-1.5 text-sm text-white/60">
           Amount (USD)
-          <input className={field} inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} />
+          <input
+            className={field}
+            inputMode="decimal"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
         </label>
         <label className="flex flex-col gap-1.5 text-sm text-white/60">
           Payment note
-          <textarea className={`${field} min-h-24`} value={note} onChange={(e) => setNote(e.target.value)} />
+          <textarea
+            className={`${field} min-h-24`}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+          />
         </label>
         <label className="flex items-center gap-3 text-sm text-white/70">
           <input
@@ -134,22 +167,30 @@ export function RiskPlayground({ now }: { now?: Date }) {
           />
           Margaret has paid this payee before
         </label>
-        <p className="text-xs text-white/40">
-          Rules compiled from: “{MANDATE_TEXT}”
-        </p>
+        <p className="text-xs text-white/40">Rules compiled from: “{MANDATE_TEXT}”</p>
       </form>
-      <div className="flex flex-col items-center justify-center gap-3 text-center" aria-live="polite" data-testid="risk-result">
+      <div
+        className="flex flex-col items-center justify-center gap-3 text-center"
+        aria-live="polite"
+        data-testid="risk-result"
+      >
         {result && style ? (
           <>
             <Gauge score={result.score} color={style.color} />
             <p className="text-sm uppercase tracking-[0.2em] text-white/50">Risk score</p>
-            <p className="text-2xl font-semibold" style={{ color: style.color }} data-level={result.level}>
+            <p
+              className="text-2xl font-semibold"
+              style={{ color: style.color }}
+              data-level={result.level}
+            >
               {style.label} · {style.action}
             </p>
             <ul className="mt-2 w-full space-y-2 text-left text-sm text-white/75">
               {result.reasons.map((reason) => (
                 <li key={reason} className="flex gap-2 rounded-lg bg-white/[0.04] px-3 py-2">
-                  <span aria-hidden="true" style={{ color: style.color }}>●</span>
+                  <span aria-hidden="true" style={{ color: style.color }}>
+                    ●
+                  </span>
                   {reason}
                 </li>
               ))}
