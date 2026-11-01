@@ -9,9 +9,14 @@ import { PayPage } from './pages/PayPage';
 import { ResultPage } from './pages/ResultPage';
 import { SetupPage } from './pages/SetupPage';
 
+function routerBasename(): string | undefined {
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  return base.length > 0 ? base : undefined;
+}
+
 export function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={routerBasename()}>
       <Layout>
         <Routes>
           <Route path="/" element={<HomePage />} />
