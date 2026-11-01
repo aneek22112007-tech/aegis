@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- GitHub Pages publishes the screens. The payment server still starts with `npm run dev`.
+
 ## 1.0.0
 
 - GitHub Actions runs lint, the typecheck, the unit tests, and the three browser demos.
