@@ -10,6 +10,7 @@ import { Bento } from './v3/Bento';
 import { GuardianSide } from './v3/GuardianSide';
 import { MargaretsDay } from './v3/MargaretsDay';
 import { Trust } from './v3/Trust';
+import { useActiveSection } from './v3/useActiveSection';
 
 export const FTC_SOURCE =
   'https://www.ftc.gov/news-events/news/press-releases/2026/10/ftc-issues-annual-report-congress-agencys-actions-protect-older-adults';
@@ -107,6 +108,7 @@ function Faq() {
 
 export default function LandingPage() {
   useProductType();
+  const active = useActiveSection(NAV.map((item) => item.href.slice(1)));
   return (
     <div className="ui min-h-screen bg-white text-[var(--gray-900)]">
       <a
@@ -125,7 +127,12 @@ export default function LandingPage() {
             className="hidden gap-6 text-[14px] text-[var(--gray-600)] md:flex"
           >
             {NAV.map((item) => (
-              <a key={item.href} href={item.href} className="hover:text-[var(--gray-900)]">
+              <a
+                key={item.href}
+                href={item.href}
+                aria-current={active === item.href.slice(1) ? 'location' : undefined}
+                className="nav-link hover:text-[var(--gray-900)]"
+              >
                 {item.label}
               </a>
             ))}
