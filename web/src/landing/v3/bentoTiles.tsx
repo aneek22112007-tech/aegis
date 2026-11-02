@@ -78,3 +78,22 @@ export function ScoreArt() {
     </div>
   );
 }
+
+/** A few rows from the Lure Log: the scam patterns AEGIS caught. */
+export function LureLogArt() {
+  const rows: [string, string][] = [
+    ['Gift card request', '3 this month'],
+    ['Fake officer or bank', '2 this month'],
+    ['Urgent “keep it safe”', '2 this month'],
+  ];
+  return (
+    <ul className="bento-rows">
+      {rows.map(([lure, count]) => (
+        <li key={lure} className="bento-lure">
+          <span className="truncate">{lure}</span>
+          <span className="text-[var(--gray-500)]">{count}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}

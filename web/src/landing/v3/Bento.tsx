@@ -1,5 +1,5 @@
 import './bento.css';
-import { AuthorizeArt, RulesArt, ScoreArt } from './bentoTiles';
+import { AuthorizeArt, RulesArt, ScoreArt, LureLogArt } from './bentoTiles';
 
 type Size = 'hero' | 'wide' | 'one';
 
@@ -51,6 +51,13 @@ export function Bento() {
         copy="Every decision lists the reasons behind it, in plain English."
       >
         <ScoreArt />
+      </Cell>
+      <Cell
+        size="one"
+        title="The Lure Log"
+        copy="Each stopped payment is filed under the trick that was used, ready to report to the FTC."
+      >
+        <LureLogArt />
       </Cell>
     </div>
   );

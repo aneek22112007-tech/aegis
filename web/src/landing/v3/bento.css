@@ -155,3 +155,7 @@
   content: '— ';
   color: var(--gray-400, #98a2b3);
 }
+
+.bento-rows li.bento-lure {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
