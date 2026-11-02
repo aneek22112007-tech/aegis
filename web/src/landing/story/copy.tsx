@@ -42,8 +42,8 @@ export function HeroCopy() {
           Run the live demo
           <Icon name="arrowRight" />
         </Link>
-        <a href="#checker" className="btn btn-secondary btn-lg">
-          Try the risk checker
+        <a href="#day" className="btn btn-secondary btn-lg">
+          See Margaret’s day
         </a>
       </div>
     </>
