@@ -114,13 +114,27 @@ export function ReadAloudArt() {
   );
 }
 
-/** Quiet hours on a 24-hour bar: payments after 9 PM wait until morning. */
+function hourOf(hhmm: string): number {
+  const [h, m] = hhmm.split(':').map(Number);
+  return h + (m || 0) / 60;
+}
+
+function clockLabel(hhmm: string): string {
+  const h = Math.floor(hourOf(hhmm));
+  const suffix = h < 12 ? 'AM' : 'PM';
+  return `${h % 12 === 0 ? 12 : h % 12} ${suffix}`;
+}
+
+/** Quiet hours on a 24-hour bar, read from the compiled policy so it always matches. */
 export function QuietHoursArt() {
+  const { start, end } = heuristicCompile(SAMPLE_RULES, GUARDIAN).quietHours;
+  const from = (hourOf(start) / 24) * 100;
+  const to = (hourOf(end) / 24) * 100;
   return (
     <div>
       <div className="bento-hours" role="presentation">
-        <span className="bento-hours-quiet" style={{ left: `${(21 / 24) * 100}%`, right: 0 }} />
-        <span className="bento-hours-quiet" style={{ left: 0, width: `${(7 / 24) * 100}%` }} />
+        <span className="bento-hours-quiet" style={{ left: `${from}%`, right: 0 }} />
+        <span className="bento-hours-quiet" style={{ left: 0, width: `${to}%` }} />
       </div>
       <div className="bento-hours-scale">
         <span>12 AM</span>
@@ -130,7 +144,7 @@ export function QuietHoursArt() {
         <span>12 AM</span>
       </div>
       <p className="mt-3 text-[13px] text-[var(--gray-600)]">
-        Quiet from 9 PM to 7 AM. Late-night requests wait for Priya.
+        Quiet from {clockLabel(start)} to {clockLabel(end)}. Late-night requests wait for Priya.
       </p>
     </div>
   );
