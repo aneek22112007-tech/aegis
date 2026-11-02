@@ -31,9 +31,46 @@ export const MANDATE_TEXT =
 
 const KEY = 'aegis-demo-state-v1';
 
+const DAY = 86_400_000;
+
+/** Past bills already paid, dated relative to now so nothing ever shows in the future. */
+export function seedPayments(now = Date.now()): DemoPayment[] {
+  const at = (daysAgo: number, hour: number, minute: number) => {
+    const d = new Date(now - daysAgo * DAY);
+    d.setHours(hour, minute, 0, 0);
+    return d.toISOString();
+  };
+  const paid = (
+    id: string,
+    payeeName: string,
+    amountCents: number,
+    note: string,
+    createdAt: string,
+  ): DemoPayment => ({
+    id,
+    payeeName,
+    amountCents,
+    note,
+    status: 'captured',
+    level: 'LOW',
+    score: 8,
+    decision: 'capture',
+    resolution: null,
+    reasons: ['This payee is trusted.', 'The amount is in the usual range.'],
+    paypalOrderId: `DEMO-${id.toUpperCase()}`,
+    authorizationId: `DEMO-AUTH-${id.toUpperCase()}`,
+    createdAt,
+  });
+  return [
+    paid('pay_seed_cvs2', 'CVS Pharmacy', 4600, 'Prescription refill', at(3, 10, 24)),
+    paid('pay_seed_city', 'City Utilities', 9200, 'Monthly utility bill', at(8, 9, 5)),
+    paid('pay_seed_cvs1', 'CVS Pharmacy', 4800, 'Prescription refill', at(17, 15, 40)),
+  ];
+}
+
 export function seedState(): DemoState {
   return {
-    payments: [],
+    payments: seedPayments(),
     payees: [
       { id: 'payee_cvs', name: 'CVS Pharmacy', status: 'trusted' },
       { id: 'payee_city', name: 'City Utilities', status: 'trusted' },
