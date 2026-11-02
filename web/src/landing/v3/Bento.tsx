@@ -1,5 +1,5 @@
 import './bento.css';
-import { AuthorizeArt, RulesArt } from './bentoTiles';
+import { AuthorizeArt, RulesArt, ScoreArt } from './bentoTiles';
 
 type Size = 'hero' | 'wide' | 'one';
 
@@ -44,6 +44,13 @@ export function Bento() {
         copy="Every payment starts as a PayPal authorization. Risky ones are voided, so there is nothing to refund."
       >
         <AuthorizeArt />
+      </Cell>
+      <Cell
+        size="one"
+        title="A score you can read"
+        copy="Every decision lists the reasons behind it, in plain English."
+      >
+        <ScoreArt />
       </Cell>
     </div>
   );

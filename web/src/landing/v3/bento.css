@@ -132,3 +132,26 @@
 .bento-pill[data-status='captured'] { background: #ecfdf3; color: #067647; }
 .bento-pill[data-status='authorized'] { background: #fffaeb; color: #b54708; }
 .bento-pill[data-status='voided'] { background: #fef3f2; color: #b42318; }
+
+.bento-score {
+  font-size: 40px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--gray-900);
+}
+
+.bento-reasons {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--gray-600);
+}
+
+.bento-reasons li::before {
+  content: '— ';
+  color: var(--gray-400, #98a2b3);
+}

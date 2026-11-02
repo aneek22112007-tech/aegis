@@ -1,4 +1,5 @@
 import { heuristicCompile } from '../../engine/heuristic';
+import { evaluateRisk } from '../../engine/evaluate';
 import { summarizePolicy } from '../../engine/summary';
 
 const GUARDIAN = { name: 'Priya', contact: 'daughter' };
@@ -44,5 +45,36 @@ export function AuthorizeArt() {
         </li>
       ))}
     </ul>
+  );
+}
+
+/** Score for the "Officer James" payment, computed by the real engine. */
+export function ScoreArt() {
+  const policy = heuristicCompile(SAMPLE_RULES, GUARDIAN);
+  const decision = evaluateRisk({
+    amount: 1900,
+    payeeName: 'James W.',
+    note: 'urgent bank investigation, keep money safe',
+    payeeStatus: 'unknown',
+    recentPaymentCount: 1,
+    recentPaymentTotal: 48,
+    historyAmounts: [48, 62, 120, 35],
+    now: new Date('2026-11-03T14:47:00'),
+    policy,
+  });
+  return (
+    <div>
+      <div className="flex items-baseline gap-2">
+        <span className="bento-score">{decision.score}</span>
+        <span className="bento-pill" data-status="voided">
+          {decision.level}
+        </span>
+      </div>
+      <ul className="bento-reasons">
+        {decision.reasons.slice(0, 3).map((r) => (
+          <li key={r}>{r}</li>
+        ))}
+      </ul>
+    </div>
   );
 }
