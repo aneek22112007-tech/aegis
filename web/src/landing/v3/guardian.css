@@ -173,3 +173,7 @@
   border: 1px solid var(--gray-300);
   background: #fff;
 }
+
+@media (max-width: 1023px) {
+  .g-card { order: -1; }
+}
