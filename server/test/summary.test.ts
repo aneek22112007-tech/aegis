@@ -20,6 +20,6 @@ describe('summarizePolicy', () => {
     expect(summary).toContain('$500');
     expect(summary).toContain('Priya');
     expect(summary).toContain('pharmacy');
-    expect(summary).toContain('22:00');
+    expect(summary).toContain('Quiet hours are 10 PM to 7 AM.');
   });
 });
