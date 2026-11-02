@@ -80,18 +80,16 @@ function DisplayMenu() {
         aria-expanded={open}
         aria-haspopup="true"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex h-12 items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--card)] px-3 text-[0.75rem] font-semibold hover:bg-[var(--bg)]"
+        className="inline-flex h-11 items-center gap-2 whitespace-nowrap rounded-xl px-3 text-[0.75rem] font-semibold text-[var(--muted)] no-underline hover:bg-[var(--bg)] hover:text-[var(--ink)] aria-expanded:bg-[var(--bg)] aria-expanded:text-[var(--ink)]"
       >
-        <span aria-hidden="true" className="text-[0.85rem] font-bold leading-none">
-          Aa
-        </span>
-        <span className="hidden xl:inline">Display</span>
+        <Icon name="sliders" size={18} />
+        <span className="hidden sm:inline">Display</span>
       </button>
       {open ? (
         <div
           role="group"
           aria-label="Display settings"
-          className="s-card absolute right-0 top-14 z-30 w-[18rem] p-2 shadow-lg"
+          className="s-card absolute right-0 top-12 z-30 w-[18rem] p-2 shadow-lg"
         >
           <Toggle
             label="Larger text"
@@ -147,16 +145,13 @@ export function Layout({ children }: { children: ReactNode }) {
           >
             AEGIS
           </span>
-          <nav
-            aria-label="Sections"
-            className="ml-4 hidden items-center gap-1 rounded-full bg-[var(--bg)] p-1 lg:flex"
-          >
+          <nav aria-label="Sections" className="ml-6 hidden h-full items-stretch gap-6 lg:flex">
             {TABS.map((tab) => (
               <NavLink
                 key={tab.to}
                 to={tab.to}
                 end={tab.end}
-                className="s-tab inline-flex h-11 items-center gap-2 whitespace-nowrap rounded-full px-4 text-[0.75rem] font-semibold text-[var(--muted)] no-underline hover:text-[var(--ink)]"
+                className="s-tab inline-flex items-center gap-2 whitespace-nowrap border-b-2 border-transparent px-1 text-[0.75rem] font-semibold text-[var(--muted)] no-underline hover:text-[var(--ink)]"
               >
                 <Icon name={tab.icon} size={18} />
                 {tab.label}
@@ -166,7 +161,7 @@ export function Layout({ children }: { children: ReactNode }) {
           <div className="ml-auto flex items-center gap-2">
             <Link
               to="/guardian"
-              className="hidden h-12 items-center gap-2 whitespace-nowrap rounded-full px-3 text-[0.75rem] font-semibold text-[var(--muted)] no-underline hover:bg-[var(--bg)] hover:text-[var(--ink)] xl:inline-flex"
+              className="hidden h-11 items-center gap-2 whitespace-nowrap rounded-xl px-3 text-[0.75rem] font-semibold text-[var(--muted)] no-underline hover:bg-[var(--bg)] hover:text-[var(--ink)] xl:inline-flex"
             >
               <Icon name="eye" size={18} />
               Priya&rsquo;s view
