@@ -42,10 +42,24 @@ test('capture landing, sandbox, dashboard and senior screenshots', async ({ page
   await page.waitForTimeout(800);
   await page.screenshot({ path: 'docs/dashboard-lure-log.png', fullPage: true });
 
-  await page.setViewportSize({ width: 1024, height: 900 });
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/senior');
-  await page.waitForTimeout(500);
+  await expect(page.getByRole('heading', { name: 'Recent activity' })).toBeVisible();
+  await page.waitForTimeout(600);
   await page.screenshot({ path: 'docs/senior.png', fullPage: true });
+
+  await page.goto('/senior/pay?payee=CVS%20Pharmacy');
+  await page.getByLabel('How much?').fill('48');
+  await page.getByLabel(/What is it for/).fill('Prescription refill');
+  await page.getByRole('button', { name: /Review payment/ }).click();
+  await expect(page.getByText('to CVS Pharmacy')).toBeVisible();
+  await page.screenshot({ path: 'docs/senior-send.png', fullPage: true });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/senior');
+  await expect(page.getByRole('heading', { name: 'Recent activity' })).toBeVisible();
+  await page.waitForTimeout(600);
+  await page.screenshot({ path: 'docs/senior-mobile.png' });
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
