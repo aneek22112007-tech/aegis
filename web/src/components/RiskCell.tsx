@@ -1,28 +1,18 @@
 import type { ICellRendererParams } from 'ag-grid-community';
 import type { AuditRow } from '../api';
+import { riskChip, statusChip } from '../ui/status';
 
 export function RiskCell(props: ICellRendererParams<AuditRow, string | null>) {
   const level = props.value ?? '';
-  const colour =
-    level === 'HIGH'
-      ? 'var(--d-high, var(--danger))'
-      : level === 'MEDIUM'
-        ? 'var(--d-med, var(--warn))'
-        : 'var(--d-low, var(--accent))';
+  const chip = riskChip(level);
   return (
-    <span
-      style={{
-        color: colour,
-        fontWeight: 700,
-        border: `1px solid ${colour}`,
-        borderRadius: 999,
-        padding: '2px 10px',
-        fontSize: 12,
-        letterSpacing: '0.04em',
-      }}
-      data-level={level || 'NONE'}
-    >
-      {level || '—'}
+    <span className={`chip chip-${chip.tone}`} data-level={level || 'NONE'}>
+      {props.data?.score ?? '—'} {chip.label}
     </span>
   );
+}
+
+export function StatusCell(props: ICellRendererParams<AuditRow, string>) {
+  const chip = statusChip(props.value);
+  return <span className={`chip chip-${chip.tone}`}>{chip.label}</span>;
 }

@@ -1,16 +1,21 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { RiskCell } from './RiskCell';
+import { RiskCell, StatusCell } from './RiskCell';
 
 describe('RiskCell', () => {
-  it('marks a high risk in the danger colour', () => {
+  it('shows the score with a high-risk chip', () => {
     render(
       <RiskCell
-        {...({
-          value: 'HIGH',
-        } as Parameters<typeof RiskCell>[0])}
+        {...({ value: 'HIGH', data: { score: 100 } } as unknown as Parameters<typeof RiskCell>[0])}
       />,
     );
-    expect(screen.getByText('HIGH').getAttribute('data-level')).toBe('HIGH');
+    const chip = screen.getByText('100 High');
+    expect(chip.getAttribute('data-level')).toBe('HIGH');
+    expect(chip.className).toContain('chip-bad');
+  });
+
+  it('labels a voided status', () => {
+    render(<StatusCell {...({ value: 'voided' } as Parameters<typeof StatusCell>[0])} />);
+    expect(screen.getByText('Voided').className).toContain('chip-bad');
   });
 });

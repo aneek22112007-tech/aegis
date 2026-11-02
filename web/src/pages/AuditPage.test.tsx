@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import type { AuditRow } from '../api';
 import { AuditPage } from './AuditPage';
@@ -87,7 +88,11 @@ describe('AuditPage', () => {
       revokeObjectURL: () => undefined,
     });
     HTMLAnchorElement.prototype.click = () => undefined;
-    render(<AuditPage />);
+    render(
+      <MemoryRouter>
+        <AuditPage />
+      </MemoryRouter>,
+    );
     expect(await screen.findByRole('button', { name: 'CVS Pharmacy' })).toBeTruthy();
     fireEvent.change(screen.getByLabelText('Risk'), { target: { value: 'HIGH' } });
     expect(screen.queryByRole('button', { name: 'CVS Pharmacy' })).toBeNull();
