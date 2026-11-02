@@ -110,7 +110,7 @@ export default function LandingPage() {
         Skip to content
       </a>
       <header className="sticky top-0 z-30 border-b border-[var(--gray-200)] bg-white/95 backdrop-blur-sm">
-        <div className="mx-auto flex h-16 max-w-6xl items-center gap-8 px-6">
+        <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4 sm:px-6 md:gap-8">
           <Link to="/" aria-label="AEGIS home">
             <Logo />
           </Link>
