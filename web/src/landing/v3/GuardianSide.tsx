@@ -60,9 +60,45 @@ function AlertCard() {
   );
 }
 
+const POINTS: [string, string][] = [
+  [
+    'She hears in seconds',
+    'Held payments are pushed to Priya’s dashboard over a live event stream, no refresh needed.',
+  ],
+  [
+    'She sees why',
+    'The amount, the payee, the score and every reason, in the same words Margaret was shown.',
+  ],
+  [
+    'She decides once',
+    'Approve captures the authorization. Deny voids it. Either way Margaret’s screen updates.',
+  ],
+  [
+    'Margaret stays in charge',
+    'Trusted people and normal amounts never wait for Priya. AEGIS only asks when something looks wrong.',
+  ],
+];
+
+function Points() {
+  return (
+    <ol className="g-points">
+      {POINTS.map(([title, body], i) => (
+        <li key={title}>
+          <span className="g-num">{String(i + 1).padStart(2, '0')}</span>
+          <div>
+            <h3 className="g-point-title">{title}</h3>
+            <p className="g-point-body">{body}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 export function GuardianSide() {
   return (
     <div className="g-grid">
+      <Points />
       <AlertCard />
     </div>
   );

@@ -131,3 +131,40 @@
 }
 
 .g-reset:hover { text-decoration: underline; }
+
+.g-points {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.g-points li {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 12px;
+}
+
+.g-num {
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--brand);
+  padding-top: 1px;
+}
+
+.g-point-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.g-point-body {
+  margin-top: 3px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--gray-600);
+}
+
+@media (min-width: 1024px) {
+  .g-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 64px; }
+}
