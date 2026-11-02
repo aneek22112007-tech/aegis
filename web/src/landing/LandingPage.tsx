@@ -213,6 +213,16 @@ export default function LandingPage() {
         <Section id="faq" muted eyebrow="FAQ" title="Questions families ask">
           <div className="max-w-3xl">
             <Faq />
+            <p className="mt-4 text-[14px] text-[var(--gray-600)]">
+              Something else?{' '}
+              <a
+                href="https://github.com/aneek22112007-tech/aegis/issues"
+                className="font-medium text-[var(--brand)] hover:underline"
+              >
+                Ask on GitHub
+              </a>
+              .
+            </p>
           </div>
         </Section>
 
