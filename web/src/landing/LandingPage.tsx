@@ -1,18 +1,19 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Chip } from '../ui/Chip';
 import { Icon } from '../ui/Icon';
 import { Logo } from '../ui/Logo';
 import { useProductType } from '../ui/useProductType';
 import { RiskPlayground } from './RiskPlayground';
+import { Story } from './story/Story';
 
 export const FTC_SOURCE =
   'https://www.ftc.gov/news-events/news/press-releases/2026/10/ftc-issues-annual-report-congress-agencys-actions-protect-older-adults';
 
 const NAV = [
-  { href: '#how', label: 'How it works' },
+  { href: '#story', label: 'How it works' },
+  { href: '#outcomes', label: 'Outcomes' },
+  { href: '#audit', label: 'Lure Log' },
   { href: '#checker', label: 'Risk checker' },
-  { href: '#guardian', label: 'Guardian app' },
   { href: '#security', label: 'Security' },
   { href: '#faq', label: 'FAQ' },
 ];
@@ -54,99 +55,6 @@ function Section({
 }
 
 /** Product mockup: the guardian approval screen on desktop with the senior app beside it. */
-function HeroMock() {
-  return (
-    <div
-      className="relative"
-      data-testid="static-shield"
-      aria-label="AEGIS guardian approval screen"
-      role="img"
-    >
-      <div className="card overflow-hidden shadow-[var(--shadow-lg)]">
-        <div className="flex items-center gap-2 border-b border-[var(--gray-200)] bg-[var(--gray-25)] px-4 py-2.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-[var(--gray-300)]" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[var(--gray-300)]" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[var(--gray-300)]" />
-          <span className="ml-3 text-xs text-[var(--gray-500)]">
-            Margaret’s household › Approvals
-          </span>
-        </div>
-        <div className="grid grid-cols-[150px_1fr] text-[13px]">
-          <div className="hidden flex-col gap-1 border-r border-[var(--gray-200)] p-3 sm:flex">
-            {['Overview', 'Approvals', 'Lure Log', 'Rules'].map((item, i) => (
-              <span
-                key={item}
-                className={`rounded px-2 py-1.5 ${i === 1 ? 'bg-[var(--brand-50)] font-medium text-[var(--brand)]' : 'text-[var(--gray-600)]'}`}
-              >
-                {item}
-              </span>
-            ))}
-          </div>
-          <div className="col-span-2 p-4 sm:col-span-1">
-            <div className="flex items-center gap-2">
-              <Chip tone="warn">Needs review</Chip>
-              <Chip tone="warn">Risk 52 · Medium</Chip>
-              <span className="ml-auto text-xs text-[var(--gray-500)]">2 min ago</span>
-            </div>
-            <p className="mt-3 text-[18px] font-semibold tracking-[-0.01em]">
-              $650.00 to Helen Brooks
-            </p>
-            <p className="text-[var(--gray-500)]">“Birthday gift”</p>
-            <ul className="mt-3 flex flex-col gap-1 text-[var(--gray-700)]">
-              <li className="border-l-2 border-[var(--gray-300)] pl-2">
-                First payment to this person
-              </li>
-              <li className="border-l-2 border-[var(--gray-300)] pl-2">
-                Above Margaret’s $500 limit for new payees
-              </li>
-            </ul>
-            <div className="mt-4 flex gap-2">
-              <span className="btn btn-danger">Deny</span>
-              <span className="btn btn-primary">Approve</span>
-            </div>
-            <dl className="mt-4 grid grid-cols-2 gap-y-1 border-t border-[var(--gray-200)] pt-3 text-xs">
-              <dt className="text-[var(--gray-500)]">Payment ID</dt>
-              <dd className="mono text-right">pay_8f2k1q0zx3</dd>
-              <dt className="text-[var(--gray-500)]">PayPal status</dt>
-              <dd className="text-right">Authorized, not captured</dd>
-            </dl>
-          </div>
-        </div>
-      </div>
-      <div className="absolute -bottom-10 -left-6 hidden w-[190px] rounded-[28px] border border-[var(--gray-300)] bg-white p-3 shadow-[var(--shadow-lg)] lg:block">
-        <div className="rounded-[20px] bg-[var(--gray-25)] p-3">
-          <p className="text-[11px] text-[var(--gray-500)]">Margaret’s app</p>
-          <p className="mt-2 text-[15px] font-semibold leading-snug">
-            Your payment is waiting for Priya
-          </p>
-          <p className="mt-1 text-[12px] text-[var(--gray-600)]">
-            $650 to Helen Brooks. Nothing has left your account.
-          </p>
-          <span className="btn btn-secondary mt-3 w-full">OK</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-const STEPS = [
-  {
-    n: '1',
-    title: 'Margaret pays as usual',
-    body: 'She enters an amount and a payee in a large-type app. AEGIS asks PayPal to authorize the payment — the money is reserved, not sent.',
-  },
-  {
-    n: '2',
-    title: 'AEGIS scores it against her rules',
-    body: 'The risk engine checks the amount, the payee, her history, the time of day and scam language in the note, then explains each signal.',
-  },
-  {
-    n: '3',
-    title: 'Capture, hold or void',
-    body: 'Below 35 it captures. From 35 to 69 it holds and asks her guardian. At 70 and above it voids the authorization before any money moves.',
-  },
-];
-
 const FAQ = [
   {
     q: 'Does AEGIS hold my money?',
@@ -192,13 +100,6 @@ function Faq() {
   );
 }
 
-const LOG = [
-  ['Oct 31, 09:12', 'CVS Pharmacy', '$48.00', 'ok', '12 Low', 'Captured'],
-  ['Oct 31, 14:40', 'Helen Brooks', '$650.00', 'warn', '52 Medium', 'Held'],
-  ['Nov 1, 23:05', 'Officer James', '$1,900.00', 'bad', '100 High', 'Voided'],
-  ['Nov 2, 08:30', 'City Utilities', '$92.00', 'ok', '8 Low', 'Captured'],
-] as const;
-
 export default function LandingPage() {
   useProductType();
   return (
@@ -236,162 +137,16 @@ export default function LandingPage() {
       </header>
 
       <main id="main">
-        <section className="bg-gradient-to-b from-[var(--gray-25)] to-white">
-          <div className="mx-auto grid max-w-6xl items-center gap-14 px-6 pb-24 pt-16 lg:grid-cols-[1fr_1.1fr] lg:pt-24">
-            <div>
-              <p className="inline-flex items-center gap-2 text-[13px] font-medium text-[var(--gray-600)]">
-                <Icon name="shield" className="text-[var(--brand)]" />
-                Payment guardrails for older adults
-              </p>
-              <h1 className="mt-4 text-[40px] font-semibold leading-[1.1] tracking-[-0.03em] md:text-[52px]">
-                Your parent’s rules,{' '}
-                <span className="text-[var(--gray-500)]">enforced before money moves.</span>
-              </h1>
-              <p className="mt-5 max-w-lg text-[17px] leading-relaxed text-[var(--gray-600)]">
-                AEGIS authorizes each PayPal payment, scores it against the rules your family set,
-                and only captures it when it looks right. Anything unusual waits for a guardian.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Link to="/demo" className="btn btn-primary btn-lg">
-                  Run the live demo
-                  <Icon name="arrowRight" />
-                </Link>
-                <a href="#how" className="btn btn-secondary btn-lg">
-                  See how it works
-                </a>
-              </div>
-              <p className="mt-6 text-[13px] text-[var(--gray-500)]">
-                Open source · PayPal Orders v2 · No account needed for the sandbox
-              </p>
-            </div>
-            <HeroMock />
-          </div>
-        </section>
-
-        <section className="border-t border-[var(--gray-200)]">
-          <div className="mx-auto grid max-w-6xl gap-6 px-6 py-10 md:grid-cols-[1fr_2fr] md:items-center">
-            <p className="text-[15px] font-medium">Why it matters</p>
-            <p className="text-[15px] text-[var(--gray-600)]">
-              The FTC’s latest report to Congress on protecting older adults describes billions in
-              reported fraud losses, much of it sent by people who were talked into paying.{' '}
-              <a
-                href={FTC_SOURCE}
-                className="inline-flex items-center gap-1 font-medium text-[var(--brand)] underline-offset-2 hover:underline"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Read the FTC report
-                <Icon name="external" />
-              </a>
-            </p>
-          </div>
-        </section>
-
-        <Section
-          id="how"
-          eyebrow="How it works"
-          title="Authorize first. Decide. Then capture."
-          lead="Most fraud alerts fire after money has left. AEGIS sits between authorization and capture, so a bad payment can be stopped instead of reported."
-        >
-          <ol className="grid gap-px overflow-hidden rounded-lg border border-[var(--gray-200)] bg-[var(--gray-200)] md:grid-cols-3">
-            {STEPS.map((step) => (
-              <li key={step.n} className="bg-white p-6">
-                <span className="mono text-[13px] text-[var(--gray-500)]">Step {step.n}</span>
-                <h3 className="mt-2 text-[16px] font-semibold">{step.title}</h3>
-                <p className="mt-2 text-[14px] leading-relaxed text-[var(--gray-600)]">
-                  {step.body}
-                </p>
-              </li>
-            ))}
-          </ol>
-        </Section>
+        <Story />
 
         <Section
           id="checker"
           muted
-          eyebrow="Risk checker"
+          eyebrow="07 · Risk checker"
           title="Try the same engine the server runs"
           lead="Pick an example or type your own payment. The score and reasons come from the AEGIS risk engine, running in your browser."
         >
           <RiskPlayground />
-        </Section>
-
-        <Section
-          id="guardian"
-          eyebrow="Guardian app"
-          title="One inbox for the payments that need a person"
-          lead="Guardians see why a payment was held, approve or deny it in one tap, and Margaret’s app updates as soon as they do."
-        >
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="card p-5">
-              <div className="flex items-center gap-2">
-                <Chip tone="warn">Needs review</Chip>
-                <span className="ml-auto text-xs text-[var(--gray-500)]">Just now</span>
-              </div>
-              <p className="mt-3 text-[16px] font-semibold">$650.00 to Helen Brooks</p>
-              <p className="text-[13px] text-[var(--gray-500)]">
-                Authorized with PayPal · not captured
-              </p>
-              <div className="mt-4 flex gap-2">
-                <span className="btn btn-danger">Deny</span>
-                <span className="btn btn-primary">Approve</span>
-              </div>
-            </div>
-            <ul className="flex flex-col gap-4 text-[14px] text-[var(--gray-700)]">
-              {[
-                [
-                  'Live updates',
-                  'New holds appear without refreshing, with an optional alert sound.',
-                ],
-                ['Plain-language reasons', 'Every hold lists the signals that triggered it.'],
-                ['Nothing moves while you decide', 'The authorization is reserved, not captured.'],
-              ].map(([title, body]) => (
-                <li key={title} className="flex gap-3">
-                  <Icon name="check" className="mt-0.5 shrink-0 text-[var(--brand)]" />
-                  <span>
-                    <span className="font-medium text-[var(--gray-900)]">{title}.</span> {body}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </Section>
-
-        <Section
-          id="audit"
-          muted
-          eyebrow="Audit log"
-          title="Every decision, on the record"
-          lead="The Lure Log keeps each payment with its score, reasons and outcome. Export it as CSV or download a report for a stopped scam to share with the bank or police."
-        >
-          <div className="card overflow-x-auto">
-            <table className="table min-w-[640px]">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Payee</th>
-                  <th className="text-right">Amount</th>
-                  <th>Risk</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {LOG.map(([date, payee, amount, tone, risk, status]) => (
-                  <tr key={payee}>
-                    <td className="text-[var(--gray-500)]">{date}</td>
-                    <td className="font-medium">{payee}</td>
-                    <td className="text-right tabular-nums">{amount}</td>
-                    <td>
-                      <Chip tone={tone}>{risk}</Chip>
-                    </td>
-                    <td>
-                      <Chip tone={tone}>{status}</Chip>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
         </Section>
 
         <Section
@@ -470,7 +225,7 @@ export default function LandingPage() {
             [
               'Learn',
               [
-                ['How it works', '#how'],
+                ['How it works', '#story'],
                 ['Risk checker', '#checker'],
                 ['Security', '#security'],
                 ['FAQ', '#faq'],

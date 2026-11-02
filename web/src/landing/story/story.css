@@ -1,0 +1,166 @@
+/* Device mockup: aluminium frame, glass screen, live React UI inside. */
+.device {
+  --w: 300px;
+  position: relative;
+  width: var(--w);
+  aspect-ratio: 300 / 620;
+  margin: 0;
+  padding: 11px;
+  border-radius: 48px;
+  background: linear-gradient(145deg, #2b2e33 0%, #17191c 45%, #2a2d31 100%);
+  box-shadow:
+    inset 0 0 0 1.5px #4a4e55,
+    inset 0 0 0 3px #101214,
+    0 50px 90px -30px rgba(16, 24, 40, 0.35),
+    0 24px 40px -20px rgba(16, 24, 40, 0.3);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.device::before,
+.device::after {
+  content: '';
+  position: absolute;
+  right: -3px;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background: #2b2e33;
+}
+.device::before {
+  top: 120px;
+  height: 64px;
+}
+.device::after {
+  top: 200px;
+  height: 40px;
+}
+.device-sm {
+  --w: 250px;
+}
+.device-screen {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 38px;
+  background: #fff;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  color: var(--gray-900);
+}
+.device-sm .device-screen {
+  font-size: 0.92em;
+}
+.device-island {
+  position: absolute;
+  left: 50%;
+  top: 9px;
+  z-index: 2;
+  width: 84px;
+  height: 24px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: #0b0c0e;
+}
+.device-screen > div:not(.device-island) {
+  padding-top: 26px;
+}
+
+.pay-card {
+  display: flex;
+  width: 320px;
+  height: 202px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 22px 24px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #1d4fb0, #123478);
+  color: #fff;
+  box-shadow: 0 30px 60px -25px rgba(16, 24, 40, 0.45);
+}
+.pay-chip {
+  width: 44px;
+  height: 34px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #e3cf9a, #b8965a);
+}
+
+.story-stage .scene {
+  perspective: 1400px;
+}
+.story-phone {
+  transform: rotateY(-16deg) rotateX(6deg);
+}
+.story-grid {
+  background-image:
+    linear-gradient(var(--gray-100) 1px, transparent 1px),
+    linear-gradient(90deg, var(--gray-100) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(70% 60% at 70% 45%, #000 30%, transparent 75%);
+  height: 140%;
+}
+.chip-float {
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  background: #fff;
+  padding: 6px 10px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  color: var(--gray-600);
+  box-shadow: var(--shadow-md);
+  white-space: nowrap;
+}
+.copy-1,
+.copy-2 {
+  opacity: 0;
+  visibility: hidden;
+}
+.outcome-scene {
+  perspective: 1400px;
+}
+.log-stage {
+  perspective: 1200px;
+}
+.void-stamp {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(-8deg);
+  border: 2px solid var(--bad);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 6px 12px;
+  color: var(--bad);
+  font-weight: 700;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.spin {
+  animation: spin 0.9s linear infinite;
+}
+.reason-in {
+  animation: reason-in 0.35s ease-out both;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes reason-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spin,
+  .reason-in {
+    animation: none;
+  }
+}
+@media (max-width: 640px) {
+  .device {
+    --w: 270px;
+  }
+  .pay-card {
+    width: 280px;
+    height: 177px;
+  }
+}
