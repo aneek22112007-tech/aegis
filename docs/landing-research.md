@@ -64,3 +64,12 @@ uiscanner, "12 best-designed SaaS websites to study in 2026"; Brainy, "Bento gri
 Light theme, one brand blue (#1849a9), Inter, no gradient text, no emoji, no hype copy.
 Motion respects `prefers-reduced-motion`, heavy chunks load lazily, and every section works at
 390, 1280 and 1920 pixels wide.
+
+## Result (v3, November 2026)
+
+Shipped in PRs #45 to #49. Screenshots from the live site are in `docs/landing-v3-*-desktop.png`
+(1280 px) and `docs/landing-v3-*-mobile.png` (390 px). Checked in Chromium at 390, 1280 and
+1920 px: no horizontal overflow, no console errors, no failed requests.
+
+Copy that describes the PayPal integration is tested against `server/src/paypal/liveClient.ts`
+and the webhook handler, so the landing page cannot drift from the code.
