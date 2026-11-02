@@ -52,7 +52,7 @@ function Section({
         <p className="text-[13px] font-semibold text-[var(--brand)]">{eyebrow}</p>
         <h2
           id={`${id}-title`}
-          className="mt-2 max-w-2xl text-[30px] font-semibold leading-tight tracking-[-0.02em] text-[var(--gray-900)]"
+          className="mt-2 max-w-2xl text-[30px] font-semibold leading-[1.15] tracking-[-0.022em] text-balance text-[var(--gray-900)] lg:text-[36px]"
         >
           {title}
         </h2>
