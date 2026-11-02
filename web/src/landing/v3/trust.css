@@ -179,3 +179,14 @@
   color: var(--gray-500);
   text-align: right;
 }
+
+@media (max-width: 639px) {
+  .trust-panel { padding: 20px; }
+
+  .trust-code {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .trust-pre { font-size: 11.5px; }
+}
