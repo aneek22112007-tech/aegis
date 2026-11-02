@@ -58,7 +58,13 @@ describe('demo mode practice merchant', () => {
     scenario('pharmacy');
     scenario('scam');
     const audit = demoRequest('GET', '/api/audit').json as { payments: View[] };
-    expect(audit.payments).toHaveLength(2);
+    // three past bills are seeded, plus the two scenarios just run
+    expect(audit.payments).toHaveLength(5);
+    expect(
+      audit.payments.every(
+        (row) => new Date((row as View & { createdAt: string }).createdAt).getTime() <= Date.now(),
+      ),
+    ).toBe(true);
     const csv = demoRequest('GET', '/api/audit/export.csv').text ?? '';
     expect(csv).toContain('when,payee,amount,score,level,decision,status,note');
     expect(csv).toContain('Officer James');

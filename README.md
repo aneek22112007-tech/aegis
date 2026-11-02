@@ -115,7 +115,11 @@ The landing page is a scroll-driven story (GSAP ScrollTrigger + Lenis, with a la
 
 ![Lure Log in AG Grid with filters and pagination](docs/dashboard-lure-log.png)
 
-![Margaret's home](docs/senior.png)
+![Margaret's home: test balance, quick actions, trusted payees and recent activity](docs/senior.png)
+
+![Send money review step](docs/senior-send.png)
+
+![Margaret's home on a phone, with the bottom tab bar](docs/senior-mobile.png)
 
 ![Landing page on a phone](docs/landing-mobile.png)
 

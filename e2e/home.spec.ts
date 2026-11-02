@@ -33,8 +33,21 @@ test.describe('reduced motion', () => {
 
 test('senior home still names AEGIS', async ({ page }) => {
   await page.goto('/senior');
+  await expect(page.getByRole('heading', { level: 1, name: /Margaret/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Protected by your rules' })).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: /payments that follow your rules/i }),
+    page.getByText('Waiting for Priya').or(page.getByText('Sent')).first(),
   ).toBeVisible();
   await expect(page.getByText(/PayPal app are not seen by AEGIS/)).toBeVisible();
+});
+
+test('senior can send a trusted bill through review', async ({ page }) => {
+  await page.goto('/senior');
+  await page.getByRole('link', { name: 'Pay a bill' }).click();
+  await expect(page.getByLabel('Who are you paying?')).toHaveValue('City Utilities');
+  await page.getByLabel('How much?').fill('92');
+  await page.getByRole('button', { name: /Review payment/ }).click();
+  await expect(page.getByText('to City Utilities')).toBeVisible();
+  await page.getByRole('button', { name: 'Check and send' }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toContainText(/City Utilities/);
 });

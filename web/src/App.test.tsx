@@ -47,8 +47,8 @@ describe('App', () => {
         <AppRoutes />
       </MemoryRouter>,
     );
-    expect(
-      await screen.findByRole('heading', { name: /payments that follow your rules/i }),
-    ).toBeTruthy();
+    expect(await screen.findByRole('heading', { level: 1, name: /Margaret/ })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'Protected by your rules' })).toBeTruthy();
+    expect(screen.getByRole('navigation', { name: 'Quick actions' })).toBeTruthy();
   });
 });
