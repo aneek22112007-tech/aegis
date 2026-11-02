@@ -137,6 +137,22 @@ export default function LandingPage() {
               </a>
             ))}
           </nav>
+          <details className="nav-menu md:hidden">
+            <summary aria-label="Sections">
+              <Icon name="list" />
+            </summary>
+            <nav aria-label="Sections" className="nav-menu-panel">
+              {NAV.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={(e) => e.currentTarget.closest('details')?.removeAttribute('open')}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+          </details>
           <div className="ml-auto flex items-center gap-2">
             <Link to="/guardian" className="btn hidden text-[var(--gray-700)] sm:inline-flex">
               Dashboard
