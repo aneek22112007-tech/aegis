@@ -39,7 +39,7 @@ export function SetupPage() {
           What should always be true?
           <textarea
             id="wishes"
-            className="min-h-48 rounded-xl border-4 border-[var(--line)] bg-[var(--card)] px-4 py-3 font-normal"
+            className="min-h-48 rounded-xl border-2 border-[var(--line)] bg-[var(--card)] px-4 py-3 font-normal"
             value={text}
             onChange={(event) => setText(event.target.value)}
           />

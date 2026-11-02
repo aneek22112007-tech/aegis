@@ -57,7 +57,7 @@ export function PayPage() {
           <input
             id="payee"
             name="payee"
-            className="min-h-14 rounded-xl border-4 border-[var(--line)] bg-[var(--card)] px-4 font-normal"
+            className="min-h-14 rounded-xl border-2 border-[var(--line)] bg-[var(--card)] px-4 font-normal"
             value={payeeName}
             autoComplete="organization"
             onChange={(event) => setPayeeName(event.target.value)}
@@ -68,7 +68,7 @@ export function PayPage() {
           <input
             id="amount"
             name="amount"
-            className="min-h-14 rounded-xl border-4 border-[var(--line)] bg-[var(--card)] px-4 font-normal"
+            className="min-h-14 rounded-xl border-2 border-[var(--line)] bg-[var(--card)] px-4 font-normal"
             inputMode="decimal"
             value={amount}
             onChange={(event) => setAmount(event.target.value)}
@@ -79,7 +79,7 @@ export function PayPage() {
           <textarea
             id="note"
             name="note"
-            className="min-h-28 rounded-xl border-4 border-[var(--line)] bg-[var(--card)] px-4 py-3 font-normal"
+            className="min-h-28 rounded-xl border-2 border-[var(--line)] bg-[var(--card)] px-4 py-3 font-normal"
             value={note}
             onChange={(event) => setNote(event.target.value)}
           />

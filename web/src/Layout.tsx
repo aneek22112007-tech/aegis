@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { DEMO_MODE } from './api';
+import { Logo } from './ui/Logo';
 
 export function Layout({ children }: { children: ReactNode }) {
   const [contrast, setContrast] = useState(() => localStorage.getItem('aegis-contrast') === '1');
@@ -32,31 +33,33 @@ export function Layout({ children }: { children: ReactNode }) {
       <a href="#main" className="skip-link">
         Skip to content
       </a>
-      <header className="border-b-4 border-[var(--line)] bg-[var(--card)]">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-4 px-6 py-4">
-          <Link to="/" className="text-2xl font-bold">
-            AEGIS
+      <header className="border-b-2 border-[var(--line)] bg-[var(--card)]">
+        <div className="mx-auto flex max-w-2xl flex-wrap items-center gap-4 px-4 py-3 sm:px-6">
+          <Link to="/senior" aria-label="AEGIS home" className="no-underline">
+            <Logo />
           </Link>
-          <nav aria-label="Sections" className="flex w-full flex-wrap gap-x-4 gap-y-2 sm:w-auto">
-            <Link to="/senior">Home</Link>
-            <Link to="/senior/pay">Send money</Link>
-            <Link to="/setup">My rules</Link>
-            <Link to="/guardian">Guardian</Link>
-            <Link to="/audit">Lure Log</Link>
-            <Link to="/demo">Demo</Link>
-          </nav>
           <button
             type="button"
-            className="ml-auto min-h-12 rounded-xl border-4 border-[var(--ink)] px-4 py-2 font-bold"
+            className="ml-auto min-h-12 rounded-xl border-2 border-[var(--line)] bg-[var(--card)] px-4 py-2 text-[0.8rem] font-bold"
             aria-pressed={contrast}
             onClick={() => setContrast((value) => !value)}
           >
             High contrast
           </button>
         </div>
+        <nav
+          aria-label="Sections"
+          className="mx-auto flex max-w-2xl flex-wrap gap-x-5 gap-y-1 px-4 pb-3 text-[0.8rem] font-bold sm:px-6"
+        >
+          <Link to="/senior">Home</Link>
+          <Link to="/senior/pay">Send money</Link>
+          <Link to="/setup">My rules</Link>
+          <Link to="/guardian">Guardian</Link>
+          <Link to="/demo">Demo</Link>
+        </nav>
       </header>
       {offline ? (
-        <p role="status" className="border-b-4 border-[var(--warn)] bg-[var(--card)] px-6 py-4">
+        <p role="status" className="border-b-2 border-[var(--warn)] bg-[var(--card)] px-6 py-4">
           This site shows the screens only. The payment server is not running, so money cannot be
           sent from here. On your computer, run npm install and npm run dev, then open{' '}
           <a className="font-bold underline" href="http://localhost:5173/demo">

@@ -33,7 +33,7 @@ export function ConfirmPage() {
           Yes, use these rules
         </Link>
         <Link
-          className="inline-flex min-h-14 items-center justify-center rounded-xl border-4 border-[var(--ink)] px-5 py-3 text-center font-bold"
+          className="inline-flex min-h-14 items-center justify-center rounded-xl border-2 border-[var(--ink)] px-5 py-3 text-center font-bold"
           to="/setup"
         >
           Change them
