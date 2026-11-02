@@ -34,6 +34,14 @@ describe('PayPage', () => {
         if (url.includes('/public-config')) {
           return json({ paypalClientId: '', paypalEnv: 'sandbox', demoMode: true });
         }
+        if (url.includes('/household')) {
+          return json({
+            senior: null,
+            guardian: null,
+            mandate: null,
+            payees: [{ id: 'p1', name: 'CVS Pharmacy', status: 'trusted' }],
+          });
+        }
         if (url.endsWith('/authorize')) return json({ payment });
         return json({ payment });
       }),
@@ -49,12 +57,31 @@ describe('PayPage', () => {
         </Routes>
       </MemoryRouter>,
     );
-    expect(await screen.findByRole('button', { name: 'Check and send' })).toBeTruthy();
     fireEvent.change(screen.getByLabelText('Who are you paying?'), {
       target: { value: 'CVS Pharmacy' },
     });
     fireEvent.change(screen.getByLabelText('How much?'), { target: { value: '48' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Check and send' }));
+    fireEvent.click(screen.getByRole('button', { name: /Review payment/ }));
+    expect(screen.getByText('$48.00')).toBeTruthy();
+    expect(screen.getByText('to CVS Pharmacy')).toBeTruthy();
+    fireEvent.click(await screen.findByRole('button', { name: 'Check and send' }));
     expect(await screen.findByText('Arrived')).toBeTruthy();
+  });
+
+  it('fills the payee from a trusted chip and keeps review disabled until an amount is set', async () => {
+    render(
+      <MemoryRouter initialEntries={['/senior/pay']}>
+        <Routes>
+          <Route path="/senior/pay" element={<PayPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+    fireEvent.click(await screen.findByRole('button', { name: /CVS Pharmacy/ }));
+    expect((screen.getByLabelText('Who are you paying?') as HTMLInputElement).value).toBe(
+      'CVS Pharmacy',
+    );
+    expect(
+      (screen.getByRole('button', { name: /Review payment/ }) as HTMLButtonElement).disabled,
+    ).toBe(true);
   });
 });
