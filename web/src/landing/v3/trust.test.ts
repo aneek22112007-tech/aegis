@@ -21,3 +21,12 @@ describe('trust section copy', () => {
     expect(webhooks.toLowerCase()).toContain(`'${header.toLowerCase()}'`);
   });
 });
+
+describe('webhook outcomes copy', () => {
+  it('matches the status codes the handler returns', async () => {
+    const handler = (await import('../../../../server/src/paypal/webhooks.ts?raw')).default;
+    expect(handler).toContain('return { status: 401 }');
+    expect(handler).toContain('return { status: 400 }');
+    expect(handler).toContain('duplicate: true');
+  });
+});
