@@ -29,7 +29,7 @@ test('a new payee waits until the guardian approves', async ({ page }) => {
   await page.getByRole('button', { name: 'Run Helen Brooks $650' }).click();
   await expect(page.getByRole('status')).toContainText('Waiting');
   await page.getByRole('button', { name: 'Approve' }).click();
-  await expect(page.getByText('Approved by Priya')).toBeVisible();
+  await expect(page.getByRole('status')).toContainText('Approved by Priya');
   await expect(page.getByRole('status')).toContainText('on its way to Helen Brooks');
 });
 
@@ -37,7 +37,7 @@ test('the guardian can deny a held payment from the demo', async ({ page }) => {
   await page.goto('/demo');
   await page.getByRole('button', { name: 'Run Helen Brooks $650' }).click();
   await page.getByRole('button', { name: 'Deny' }).click();
-  await expect(page.getByText('Denied by Priya')).toBeVisible();
+  await expect(page.getByRole('status')).toContainText('Denied by Priya');
 });
 
 test('the bail message is stopped, blocked, and drafted as a report', async ({ page }) => {
@@ -53,6 +53,7 @@ test('the bail message is stopped, blocked, and drafted as a report', async ({ p
   expect(report).toContain('$1,900.00');
   expect(report).toContain('VOIDED');
   expect(report).toContain('https://reportfraud.ftc.gov');
+  await page.keyboard.press('Escape');
   const csv = await downloadText(page, 'Download CSV');
   expect(csv).toContain('Officer James');
 });
