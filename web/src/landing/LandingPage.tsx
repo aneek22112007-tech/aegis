@@ -7,6 +7,7 @@ import { MoneyFlow } from './MoneyFlow';
 import { RiskPlayground } from './RiskPlayground';
 import { Story } from './story/Story';
 import { Bento } from './v3/Bento';
+import { GuardianSide } from './v3/GuardianSide';
 import { MargaretsDay } from './v3/MargaretsDay';
 import { Trust } from './v3/Trust';
 
@@ -160,6 +161,16 @@ export default function LandingPage() {
           lead="Each piece below is running in the sandbox today, with the same engine the server uses."
         >
           <Bento />
+        </Section>
+
+        <Section
+          id="guardian"
+          muted
+          eyebrow="Priya’s side"
+          title="When something looks wrong, family decides"
+          lead="Try it: you are Priya, and your mother is about to send $1,900 to a stranger."
+        >
+          <GuardianSide />
         </Section>
 
         <Section
