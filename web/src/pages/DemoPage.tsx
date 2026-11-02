@@ -152,7 +152,12 @@ export function DemoPage() {
             <Link className="btn hidden text-[var(--gray-600)] sm:inline-flex" to="/audit">
               Lure Log
             </Link>
-            <button type="button" onClick={startOver} className="btn btn-secondary">
+            <button
+              type="button"
+              onClick={startOver}
+              className="btn btn-secondary"
+              aria-label="Start over"
+            >
               <Icon name="refresh" />
               <span className="hidden sm:inline">Start over</span>
               <span className="sm:hidden">Reset</span>

@@ -6,7 +6,7 @@ export function amountRule(input: RiskInput): RuleHit {
   if (input.amount > input.policy.maxPerTxn) {
     points += 40;
     reasons.push(
-      `This is more than the most you wanted to send in one payment ($${input.policy.maxPerTxn}).`,
+      `This is more than the most you wanted to send in one payment ($${input.policy.maxPerTxn.toLocaleString('en-US')}).`,
     );
   } else if (input.amount > input.policy.maxPerTxn * 0.8) {
     points += 12;
@@ -14,7 +14,9 @@ export function amountRule(input: RiskInput): RuleHit {
   }
   if (input.recentPaymentTotal + input.amount > input.policy.dailyLimit) {
     points += 22;
-    reasons.push(`This would pass your $${input.policy.dailyLimit} limit for the day.`);
+    reasons.push(
+      `This would pass your $${input.policy.dailyLimit.toLocaleString('en-US')} limit for the day.`,
+    );
   }
   return { id: 'amount', points, reasons };
 }

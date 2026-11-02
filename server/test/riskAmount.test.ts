@@ -6,7 +6,7 @@ describe('amountRule', () => {
   it('adds a heavy penalty above the single-payment limit', () => {
     const hit = amountRule(riskInput({ amount: 2500, recentPaymentTotal: 0 }));
     expect(hit.points).toBe(62);
-    expect(hit.reasons.join(' ')).toContain('$2000');
+    expect(hit.reasons.join(' ')).toContain('$2,000');
   });
 
   it('adds a smaller penalty near the single-payment limit', () => {
