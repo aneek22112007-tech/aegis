@@ -63,7 +63,7 @@ export default function MotionStory() {
         stagger: 0.08,
         ease: 'power3.out',
       });
-      gsap.from(q('.copy-0 .hero-sub, .copy-0 .hero-cta'), {
+      gsap.from(q('.copy-0 .hero-sub, .copy-0 .hero-cta, .copy-0 .hero-proof'), {
         opacity: 0,
         y: 16,
         duration: 0.8,
