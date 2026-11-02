@@ -164,9 +164,7 @@ export function TrustedArt() {
         <li key={name} className="bento-person">
           <span className="bento-avatar">{initials}</span>
           <span className="truncate">{name}</span>
-          <span className="bento-pill" data-status="captured">
-            Trusted
-          </span>
+          <span className="bento-dot" aria-label="Trusted" />
         </li>
       ))}
     </ul>
