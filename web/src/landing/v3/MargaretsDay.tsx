@@ -1,5 +1,6 @@
 import './v3.css';
 import { useEffect, useRef, useState } from 'react';
+import { DayPhone } from './DayPhone';
 import { MARGARETS_DAY } from './day';
 
 /** Scroll timeline of one day in Margaret's life, from a normal payment to a voided scam. */
@@ -24,22 +25,27 @@ export function MargaretsDay() {
   }, []);
 
   return (
-    <ol ref={listRef} className="day-list">
-      {MARGARETS_DAY.map((event, i) => (
-        <li
-          key={event.id}
-          className="day-item"
-          data-tone={event.tone}
-          data-step={i}
-          aria-current={i === active ? 'step' : undefined}
-        >
-          <time className="day-time">{event.time}</time>
-          <div>
-            <h3 className="day-title">{event.title}</h3>
-            <p className="day-detail">{event.detail}</p>
-          </div>
-        </li>
-      ))}
-    </ol>
+    <div className="day-grid">
+      <div className="day-phone-wrap">
+        <DayPhone event={MARGARETS_DAY[active]} />
+      </div>
+      <ol ref={listRef} className="day-list">
+        {MARGARETS_DAY.map((event, i) => (
+          <li
+            key={event.id}
+            className="day-item"
+            data-tone={event.tone}
+            data-step={i}
+            aria-current={i === active ? 'step' : undefined}
+          >
+            <time className="day-time">{event.time}</time>
+            <div>
+              <h3 className="day-title">{event.title}</h3>
+              <p className="day-detail">{event.detail}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
   );
 }
