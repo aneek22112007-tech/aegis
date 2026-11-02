@@ -71,6 +71,7 @@ function Faq() {
             <button
               type="button"
               aria-expanded={open === i}
+              aria-controls={`faq-${i}`}
               className="flex w-full items-center justify-between px-5 py-4 text-left text-[15px] font-medium"
               onClick={() => setOpen(open === i ? null : i)}
             >
@@ -78,9 +79,13 @@ function Faq() {
               <Icon name="chevronDown" className={open === i ? 'rotate-180' : ''} />
             </button>
           </h3>
-          {open === i ? (
-            <p className="px-5 pb-4 text-[14px] text-[var(--gray-600)]">{item.a}</p>
-          ) : null}
+          <p
+            id={`faq-${i}`}
+            hidden={open !== i}
+            className="px-5 pb-4 text-[14px] leading-relaxed text-[var(--gray-600)]"
+          >
+            {item.a}
+          </p>
         </div>
       ))}
     </div>
