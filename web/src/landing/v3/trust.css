@@ -83,3 +83,39 @@
 
 .trust-step[data-step='capture'] .trust-index { border-color: #75e0a7; background: #ecfdf3; color: #067647; }
 .trust-step[data-step='void'] .trust-index { border-color: #fda29b; background: #fef3f2; color: #b42318; }
+
+.trust-toggle {
+  margin-top: 20px;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--gray-100, #f2f4f7);
+}
+
+.trust-toggle button {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-600);
+}
+
+.trust-toggle button[aria-pressed='true'] {
+  background: #fff;
+  color: var(--gray-900);
+  box-shadow: 0 1px 2px rgb(16 24 40 / 0.08);
+}
+
+.trust-step {
+  transition: opacity 200ms ease;
+}
+
+.trust-step[data-skipped] {
+  opacity: 0.35;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trust-step { transition: none; }
+}
