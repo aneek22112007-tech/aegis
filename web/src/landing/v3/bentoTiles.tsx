@@ -22,6 +22,7 @@ export function RulesArt() {
           <li key={s}>{s}</li>
         ))}
       </ul>
+      <p className="bento-foot">Compiled in your browser by the AEGIS rule engine.</p>
     </div>
   );
 }
