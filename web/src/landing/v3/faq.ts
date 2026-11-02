@@ -25,7 +25,7 @@ export const FAQ: { q: string; a: string }[] = [
     a: 'New payees above the limit Priya set, unusually large amounts, several payments in a short time, payments during quiet hours, and wording scammers use, such as “urgent”, “gift card” or “bail”.',
   },
   {
-    q: 'Can a scammer change the rules?',
+    q: 'What if someone changes the rules?',
     a: 'Every change to the rules is saved with the time it was made, and the summary Priya shares shows when they were last edited, so an unexpected change is easy to spot.',
   },
   {
