@@ -17,8 +17,8 @@ export const FTC_SOURCE =
 const NAV = [
   { href: '#story', label: 'How it works' },
   { href: '#day', label: 'A day' },
-  { href: '#audit', label: 'Lure Log' },
   { href: '#features', label: 'Features' },
+  { href: '#guardian', label: 'Priya’s side' },
   { href: '#security', label: 'Security' },
   { href: '#faq', label: 'FAQ' },
 ];
