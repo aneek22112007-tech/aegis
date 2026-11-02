@@ -1,11 +1,8 @@
 import { heuristicCompile } from '../../engine/heuristic';
-import { evaluateRisk } from '../../engine/evaluate';
 import { clock, summarizePolicy } from '../../engine/summary';
+import { GUARDIAN, SAMPLE_RULES, scoreScamPayment } from './scamPayment';
 
-const GUARDIAN = { name: 'Priya', contact: 'daughter' };
-
-export const SAMPLE_RULES =
-  'Ask Priya before I send more than $500 to someone new. Never pay gift cards. No payments after 9pm.';
+export { SAMPLE_RULES };
 
 /** The rules Priya wrote, and what the engine understood, side by side. */
 export function RulesArt() {
@@ -51,18 +48,8 @@ export function AuthorizeArt() {
 
 /** Score for the "Officer James" payment, computed by the real engine. */
 export function ScoreArt() {
-  const policy = heuristicCompile(SAMPLE_RULES, GUARDIAN);
-  const decision = evaluateRisk({
-    amount: 1900,
-    payeeName: 'James W.',
-    note: 'urgent bank investigation, keep money safe',
-    payeeStatus: 'unknown',
-    recentPaymentCount: 1,
-    recentPaymentTotal: 48,
-    historyAmounts: [48, 62, 120, 35],
-    now: new Date('2026-11-03T14:47:00'),
-    policy,
-  });
+  const decision = scoreScamPayment();
+
   return (
     <div>
       <div className="flex items-baseline gap-2">
