@@ -258,3 +258,8 @@
   font-size: 12px;
   color: var(--gray-500);
 }
+
+@media (max-width: 420px) {
+  .bento-cell { padding: 18px; }
+  .bento-hours-scale span:nth-child(2n) { visibility: hidden; }
+}
