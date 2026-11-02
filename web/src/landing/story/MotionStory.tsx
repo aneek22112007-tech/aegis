@@ -27,6 +27,14 @@ function snapshot(t: number) {
   return { stage, reasons, chapter };
 }
 
+/** Labels anchored to the phone's right edge with leader lines, revealed per chapter. */
+const CALLOUTS = [
+  { label: 'Payment', value: 'pay_8f2k1q0zx3', top: '17%', at: 'start' },
+  { label: 'PayPal order', value: 'intent AUTHORIZE', top: '35%', at: 'start' },
+  { label: 'Card funds', value: 'Reserved, not sent', top: '53%', at: 'start' },
+  { label: 'Risk engine v1', value: 'Score 35 / 70', top: '71%', at: 'check' },
+] as const;
+
 /** Desktop scroll story: one pinned stage scrubbed through three chapters, a horizontal outcomes reel, and scroll-built sections. */
 export default function MotionStory() {
   const root = useRef<HTMLDivElement>(null);
@@ -71,7 +79,6 @@ export default function MotionStory() {
         duration: 1.5,
         ease: 'power3.out',
       });
-      gsap.from(q('.chip-float'), { opacity: 0, y: 30, duration: 1, delay: 0.6, stagger: 0.12 });
 
       const card = { v: 0 };
       const gauge = { v: 0 };
@@ -103,8 +110,19 @@ export default function MotionStory() {
         4,
       );
       tl.to(q('.layer-back'), { y: -120, duration: 9 }, 0);
-      tl.to(q('.layer-mid'), { y: -220, duration: 9 }, 0);
-      tl.to(q('.layer-front'), { y: -360, duration: 9 }, 0);
+      // Callouts stay pinned to the phone and appear with the chapter they explain.
+      tl.fromTo(
+        q('.callout-start'),
+        { autoAlpha: 0, x: -10 },
+        { autoAlpha: 1, x: 0, stagger: 0.25, duration: 0.4 },
+        2.0,
+      );
+      tl.fromTo(
+        q('.callout-check'),
+        { autoAlpha: 0, x: -10 },
+        { autoAlpha: 1, x: 0, duration: 0.4 },
+        5.0,
+      );
       // Chapter copy
       tl.to(q('.copy-0'), { autoAlpha: 0, y: -40, duration: 0.6 }, 1.0);
       tl.fromTo(q('.copy-1'), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2 }, 1.6);
@@ -127,13 +145,14 @@ export default function MotionStory() {
         card,
         {
           v: 1,
-          duration: 2,
+          duration: 1.8,
           ease: 'power1.inOut',
           onUpdate: () => {
             progress.current = card.v;
           },
         },
-        1.4,
+        // Starts only once the hero copy has faded, so the card never crosses the headline.
+        1.7,
       );
       if (!webgl)
         tl.fromTo(
@@ -340,7 +359,7 @@ export default function MotionStory() {
             aria-hidden="true"
           />
           <div className="relative mx-auto grid h-full max-w-6xl grid-cols-[1fr_1.05fr] items-center gap-8 px-6 pt-16">
-            <div className="relative h-[420px]">
+            <div className="relative z-10 h-[420px]">
               <div className="copy copy-0 absolute inset-0 flex flex-col justify-center">
                 <HeroCopy />
               </div>
@@ -361,24 +380,32 @@ export default function MotionStory() {
                   <CssCard />
                 </div>
               )}
-              <div className="layer-mid pointer-events-none absolute inset-0" aria-hidden="true">
-                <span className="chip-float absolute left-[2%] top-[24%]">
-                  PayPal · intent AUTHORIZE
-                </span>
-                <span className="chip-float absolute right-[0%] top-[64%]">
-                  Risk engine v1 · 35 / 70
-                </span>
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Device label="Margaret’s AEGIS app" className="story-phone">
-                  <MargaretScreen stage={state.stage} payment={HELD} reasonsShown={state.reasons} />
-                </Device>
-              </div>
-              <div className="layer-front pointer-events-none absolute inset-0" aria-hidden="true">
-                <span className="chip-float absolute right-[4%] top-[18%]">pay_8f2k1q0zx3</span>
-                <span className="chip-float absolute left-[8%] top-[82%]">
-                  Funds reserved, not sent
-                </span>
+              {/* Phone sits left of centre so its callouts always have room on the right. */}
+              <div className="absolute inset-0 flex items-center justify-center pr-[18%]">
+                <div className="relative">
+                  <Device label="Margaret’s AEGIS app" className="story-phone">
+                    <MargaretScreen
+                      stage={state.stage}
+                      payment={HELD}
+                      reasonsShown={state.reasons}
+                    />
+                  </Device>
+                  <ul className="callouts pointer-events-none" aria-hidden="true">
+                    {CALLOUTS.map((c) => (
+                      <li
+                        key={c.value}
+                        className={`callout callout-${c.at}`}
+                        style={{ top: c.top }}
+                      >
+                        <span className="callout-line" />
+                        <span className="callout-body">
+                          <span className="callout-label">{c.label}</span>
+                          <span className="callout-value">{c.value}</span>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
