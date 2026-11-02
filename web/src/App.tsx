@@ -1,5 +1,6 @@
 import { lazy, Suspense, type ReactNode } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
+import { ErrorBoundary } from './ErrorBoundary';
 import { DashboardShell } from './dashboard/DashboardShell';
 import { Layout } from './Layout';
 
@@ -133,10 +134,20 @@ export function AppRoutes() {
   );
 }
 
+/** One boundary for every route; moving to another route clears a previous error. */
+function GuardedRoutes() {
+  const location = useLocation();
+  return (
+    <ErrorBoundary resetKey={location.pathname}>
+      <AppRoutes />
+    </ErrorBoundary>
+  );
+}
+
 export function App() {
   return (
     <BrowserRouter basename={BASENAME}>
-      <AppRoutes />
+      <GuardedRoutes />
     </BrowserRouter>
   );
 }

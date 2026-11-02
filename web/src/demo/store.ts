@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import type { RiskLevel } from '../engine/types';
 
 export type DemoPayment = {
@@ -29,7 +30,38 @@ export type DemoState = {
 export const MANDATE_TEXT =
   "Never send more than $500 to anyone I haven't paid before. Always allow my pharmacy and my utility company. If someone says it's urgent and secret, block it and call my daughter.";
 
-const KEY = 'aegis-demo-state-v1';
+/** Bump when the stored shape changes; anything else in storage is replaced with a fresh seed. */
+export const SCHEMA_VERSION = 2;
+export const KEY = 'aegis-demo-state';
+const LEGACY_KEYS = ['aegis-demo-state-v1'];
+
+const paymentSchema = z.object({
+  id: z.string(),
+  payeeName: z.string(),
+  amountCents: z.number().int().nonnegative(),
+  note: z.string(),
+  status: z.enum(['created', 'held', 'captured', 'voided', 'failed']),
+  level: z.enum(['LOW', 'MEDIUM', 'HIGH']).nullable(),
+  score: z.number().nullable(),
+  decision: z.enum(['capture', 'hold', 'void']).nullable(),
+  resolution: z.string().nullable(),
+  reasons: z.array(z.string()),
+  paypalOrderId: z.string(),
+  authorizationId: z.string().nullable(),
+  createdAt: z.string().refine((v) => !Number.isNaN(Date.parse(v))),
+});
+
+const stateSchema = z.object({
+  payments: z.array(paymentSchema),
+  payees: z.array(
+    z.object({ id: z.string(), name: z.string(), status: z.enum(['trusted', 'blocked', 'unknown']) }),
+  ),
+  history: z.record(z.array(z.number())),
+  mandateText: z.string().min(1),
+  mandateVersion: z.number().int().positive(),
+});
+
+const storedSchema = z.object({ version: z.literal(SCHEMA_VERSION), state: stateSchema });
 
 const DAY = 86_400_000;
 
@@ -96,18 +128,46 @@ function storage(): Storage | null {
   }
 }
 
+/** Reads demo data; old, broken or foreign data is dropped and replaced with a fresh seed. */
 export function loadState(): DemoState {
-  const raw = storage()?.getItem(KEY);
-  if (!raw) return seedState();
+  const store = storage();
+  if (!store) return seedState();
   try {
-    return { ...seedState(), ...(JSON.parse(raw) as Partial<DemoState>) };
+    for (const legacy of LEGACY_KEYS) store.removeItem(legacy);
+  } catch {
+    /* storage may be read-only */
+  }
+  let raw: string | null = null;
+  try {
+    raw = store.getItem(KEY);
   } catch {
     return seedState();
   }
+  if (!raw) return resetState();
+  try {
+    const parsed = storedSchema.safeParse(JSON.parse(raw));
+    if (parsed.success) return parsed.data.state as DemoState;
+  } catch {
+    /* fall through to a fresh seed */
+  }
+  return resetState();
 }
 
 export function saveState(state: DemoState): void {
-  storage()?.setItem(KEY, JSON.stringify(state));
+  try {
+    storage()?.setItem(KEY, JSON.stringify({ version: SCHEMA_VERSION, state }));
+  } catch {
+    /* private mode or full storage: keep working in memory */
+  }
+}
+
+/** Removes every demo key, used by the error screen. */
+export function clearDemoStorage(): void {
+  try {
+    for (const k of [KEY, ...LEGACY_KEYS]) storage()?.removeItem(k);
+  } catch {
+    /* ignore */
+  }
 }
 
 export function resetState(): DemoState {
