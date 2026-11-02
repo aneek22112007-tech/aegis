@@ -13,7 +13,7 @@ export function OutcomePanel({ p, index }: { p: StoryPayment; index: number }) {
   const copy = OUTCOME_COPY[p.key];
   return (
     <div
-      className={`outcome-panel outcome-${p.key} grid w-full items-center gap-10 lg:grid-cols-[1fr_1.1fr]`}
+      className={`outcome-panel outcome-${p.key} grid w-full grid-cols-1 items-center gap-10 lg:grid-cols-[1fr_1.1fr] [&>*]:min-w-0`}
     >
       <div>
         <p className="flex items-center gap-3 text-[13px] font-semibold text-[var(--brand)]">

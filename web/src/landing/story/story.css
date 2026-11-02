@@ -218,3 +218,12 @@
     height: 177px;
   }
 }
+@media (max-width: 767px) {
+  /* No room beside the phone on small screens; the webhook shows in the text list instead. */
+  .capture-event.callout-static {
+    display: none;
+  }
+  .outcome-scene {
+    padding-right: 0 !important;
+  }
+}
