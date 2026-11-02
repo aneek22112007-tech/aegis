@@ -56,7 +56,11 @@ function Section({
         >
           {title}
         </h2>
-        {lead ? <p className="mt-3 max-w-2xl text-[16px] text-[var(--gray-600)]">{lead}</p> : null}
+        {lead ? (
+          <p className="mt-3 max-w-2xl text-[16px] leading-relaxed text-pretty text-[var(--gray-600)] lg:text-[17px]">
+            {lead}
+          </p>
+        ) : null}
         <div className="mt-10">{children}</div>
       </div>
     </section>
