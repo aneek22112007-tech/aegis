@@ -97,34 +97,18 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for branches, commits, and checks.
 
 ## Screenshots
 
-![Live risk engine on the landing page](docs/landing-risk-demo.png)
+Refresh these with `SCREENSHOTS=1 npx playwright test screenshots`.
 
-![Guardian phone preview](docs/landing-guardian.png)
+![Sandbox: three test payments and the webhook-style event log](docs/demo.png)
 
-![Guardian dashboard, dark](docs/dashboard-guardian.png)
+![Guardian overview: approvals inbox, volume chart and recent payments](docs/dashboard-guardian.png)
 
-![Guardian dashboard, light](docs/dashboard-guardian-light.png)
+![Lure Log in AG Grid with filters and pagination](docs/dashboard-lure-log.png)
 
-![Lure Log dashboard](docs/dashboard-lure-log.png)
+![Margaret's home](docs/senior.png)
 
 ![Landing page on a phone](docs/landing-mobile.png)
 
-![Margaret's home](docs/home.png)
+## Design
 
-![Guided demo: a held payment waits for Priya](docs/demo.png)
-
-![Demo: the scam is voided before capture](docs/demo-voided.png)
-
-![Demo on a phone](docs/demo-mobile.png)
-
-![Sent to the pharmacy](docs/sent.png)
-
-![Stopped before the money moved](docs/stopped.png)
-
-![Priya decides](docs/guardian.png)
-
-![Lure Log with the reasons](docs/lure-log.png)
-
-![Margaret's rules](docs/setup.png)
-
-![Home on a phone](docs/home-mobile.png)
+The UI follows patterns from established payment products rather than a concept look: one brand blue with neutral greys, green/amber/red only for status, Inter at 13–14px in the dashboard, 1px borders and 6–8px radii. The guardian dashboard is an admin shell (sidebar with account switcher, search, breadcrumbs, test-mode banner), payments show short IDs such as `pay_…`, and every payment opens a drawer with its Authorized → Scored → Captured/Held/Voided timeline. Margaret's screens keep a 22px base size, Atkinson Hyperlegible and a high-contrast mode.
