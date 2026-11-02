@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Chip } from '../ui/Chip';
 import { Icon } from '../ui/Icon';
 import { Logo } from '../ui/Logo';
+import { useProductType } from '../ui/useProductType';
 import { RiskPlayground } from './RiskPlayground';
 
 export const FTC_SOURCE =
@@ -199,6 +200,7 @@ const LOG = [
 ] as const;
 
 export default function LandingPage() {
+  useProductType();
   return (
     <div className="ui min-h-screen bg-white text-[var(--gray-900)]">
       <a

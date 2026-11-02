@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { approvePayment, DEMO_MODE, denyPayment, runDemo, type PaymentView } from '../api';
 import { TimelineItems } from '../dashboard/PaymentDrawer';
@@ -8,6 +8,7 @@ import { SCENARIOS, TONE_CHIP, verdictFor, type Phase, type Scenario } from '../
 import { Chip } from '../ui/Chip';
 import { Icon } from '../ui/Icon';
 import { Logo } from '../ui/Logo';
+import { useProductType } from '../ui/useProductType';
 import { riskChip, shortId, statusChip } from '../ui/status';
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -37,15 +38,7 @@ export function DemoPage() {
   const runId = useRef(0);
   const pace = reduce ? 0 : 450;
 
-  // The senior screens scale the root font; the sandbox uses the product type scale.
-  useEffect(() => {
-    const root = document.documentElement;
-    const previous = root.style.fontSize;
-    root.style.fontSize = '16px';
-    return () => {
-      root.style.fontSize = previous;
-    };
-  }, []);
+  useProductType();
 
   function log(type: string, summary: string, source: LogEvent['source'] = 'aegis') {
     setEvents((list) => [{ id: eventId(), type, at: new Date(), summary, source }, ...list]);

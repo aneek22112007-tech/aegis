@@ -193,7 +193,8 @@ export function AuditPage() {
               id="audit-query"
               aria-label="Find a name or a note"
               placeholder="Filter by payee, note, or ID"
-              className="input w-64 pl-8"
+              className="input w-64"
+              style={{ paddingLeft: 32 }}
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />

@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { DEMO_MODE } from '../api';
 import { Icon, type IconName } from '../ui/Icon';
 import { Logo } from '../ui/Logo';
+import { useProductType } from '../ui/useProductType';
 import './theme.css';
 
 const NAV: { to: string; label: string; icon: IconName }[] = [
@@ -29,6 +30,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const title = TITLES[location.pathname] ?? 'Dashboard';
 
+  useProductType();
   function search(event: FormEvent) {
     event.preventDefault();
     navigate(`/audit?q=${encodeURIComponent(query.trim())}`);
@@ -129,7 +131,8 @@ export function DashboardShell({ children }: { children: ReactNode }) {
               <input
                 aria-label="Search payments"
                 placeholder="Search payee, note, or ID"
-                className="input w-full pl-8"
+                className="input w-full"
+                style={{ paddingLeft: 32 }}
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
               />
