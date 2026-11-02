@@ -1,26 +1,33 @@
-type Tone = 'brand' | 'low' | 'med' | 'high';
-
+/** Compact metric tile: label, value, one line of context. No colour unless it means something. */
 export function KpiCard({
   label,
   value,
   hint,
-  tone = 'brand',
+  tone,
 }: {
   label: string;
   value: string;
   hint?: string;
-  tone?: Tone;
+  tone?: 'low' | 'med' | 'high';
 }) {
+  const dot =
+    tone === 'low'
+      ? 'var(--ok)'
+      : tone === 'med'
+        ? '#b7791f'
+        : tone === 'high'
+          ? 'var(--bad)'
+          : null;
   return (
-    <div className="panel lift p-5">
-      <p className="text-xs font-medium uppercase tracking-wider text-[var(--d-muted)]">{label}</p>
-      <p
-        className="mt-2 text-2xl font-semibold tracking-tight tabular-nums break-words xl:text-[1.7rem]"
-        style={{ color: `var(--d-${tone === 'brand' ? 'ink' : tone})` }}
-      >
-        {value}
+    <div className="bg-white px-5 py-4">
+      <p className="flex items-center gap-1.5 text-[13px] text-[var(--gray-500)]">
+        {dot ? (
+          <span className="h-2 w-2 rounded-full" style={{ background: dot }} aria-hidden="true" />
+        ) : null}
+        {label}
       </p>
-      {hint ? <p className="mt-1 text-sm text-[var(--d-muted)]">{hint}</p> : null}
+      <p className="mt-1 text-[22px] font-semibold tracking-[-0.02em] tabular-nums">{value}</p>
+      {hint ? <p className="text-xs text-[var(--gray-500)]">{hint}</p> : null}
     </div>
   );
 }

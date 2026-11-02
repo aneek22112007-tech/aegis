@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { AuditRow } from '../api';
-import { riskSeries, summarize, usd } from './stats';
+import { dailyVolume, riskSeries, summarize, usd } from './stats';
 
 function row(partial: Partial<AuditRow>): AuditRow {
   return {
@@ -57,5 +57,19 @@ describe('dashboard stats', () => {
   it('handles an empty log and formats dollars', () => {
     expect(summarize([]).averageScore).toBe(0);
     expect(usd(190000)).toBe('$1,900.00');
+  });
+});
+
+describe('dailyVolume', () => {
+  it('groups dollars by day and outcome', () => {
+    const rows = [
+      { status: 'captured', amountCents: 4800, createdAt: '2026-11-01T10:00:00Z' },
+      { status: 'voided', amountCents: 190000, createdAt: '2026-11-01T11:00:00Z' },
+      { status: 'held', amountCents: 65000, createdAt: '2026-11-02T09:00:00Z' },
+    ] as AuditRow[];
+    expect(dailyVolume(rows)).toEqual([
+      { day: '2026-11-01', captured: 48, held: 0, voided: 1900 },
+      { day: '2026-11-02', captured: 0, held: 650, voided: 0 },
+    ]);
   });
 });

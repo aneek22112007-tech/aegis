@@ -52,3 +52,21 @@ export function riskSeries(rows: AuditRow[]): RiskPoint[] {
 export function usd(cents: number): string {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(cents / 100);
 }
+
+export type DayVolume = { day: string; captured: number; held: number; voided: number };
+
+/** Dollar volume per calendar day split by outcome, oldest first (last `days` days with data). */
+export function dailyVolume(rows: AuditRow[], days = 14): DayVolume[] {
+  const byDay = new Map<string, DayVolume>();
+  for (const row of rows) {
+    const date = new Date(row.createdAt);
+    const key = date.toISOString().slice(0, 10);
+    const entry = byDay.get(key) ?? { day: key, captured: 0, held: 0, voided: 0 };
+    const dollars = row.amountCents / 100;
+    if (row.status === 'captured') entry.captured += dollars;
+    else if (row.status === 'held') entry.held += dollars;
+    else if (row.status === 'voided') entry.voided += dollars;
+    byDay.set(key, entry);
+  }
+  return [...byDay.values()].sort((a, b) => a.day.localeCompare(b.day)).slice(-days);
+}

@@ -1,76 +1,80 @@
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  ReferenceLine,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
-import type { RiskPoint } from './stats';
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import type { DayVolume } from './stats';
 
-/** Risk score over time with the MEDIUM (35) and HIGH (70) thresholds. */
-export function RiskChart({ data }: { data: RiskPoint[] }) {
+const COLORS = { captured: '#3a8a5f', held: '#d9a441', voided: '#c8473d' };
+
+function dayLabel(day: string): string {
+  return new Date(`${day}T12:00:00Z`).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
+/** Stacked daily payment volume by outcome. */
+export function RiskChart({ data }: { data: DayVolume[] }) {
   if (data.length === 0) {
     return (
-      <p className="flex h-56 items-center justify-center text-sm text-[var(--d-muted)]">
-        No decisions yet — run the demo to see risk over time.
-      </p>
+      <div className="flex h-56 flex-col items-center justify-center gap-1 text-center">
+        <p className="text-[13px] font-medium">No payments in this period</p>
+        <p className="text-xs text-[var(--gray-500)]">
+          Payments appear here once Margaret sends one.
+        </p>
+      </div>
     );
   }
   const chart = (
-    <AreaChart
+    <BarChart
       width={640}
       height={224}
       data={data}
-      margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+      margin={{ top: 8, right: 4, left: -8, bottom: 0 }}
+      barCategoryGap="28%"
     >
-      <defs>
-        <linearGradient id="riskFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--d-high)" stopOpacity={0.45} />
-          <stop offset="60%" stopColor="var(--d-med)" stopOpacity={0.15} />
-          <stop offset="100%" stopColor="var(--d-low)" stopOpacity={0.02} />
-        </linearGradient>
-      </defs>
-      <CartesianGrid stroke="var(--d-line)" vertical={false} />
+      <CartesianGrid stroke="var(--gray-100)" vertical={false} />
       <XAxis
-        dataKey="label"
-        stroke="var(--d-muted)"
+        dataKey="day"
+        tickFormatter={dayLabel}
+        stroke="var(--gray-500)"
         tickLine={false}
-        axisLine={false}
+        axisLine={{ stroke: 'var(--gray-200)' }}
         fontSize={12}
       />
       <YAxis
-        domain={[0, 100]}
-        stroke="var(--d-muted)"
+        stroke="var(--gray-500)"
         tickLine={false}
         axisLine={false}
         fontSize={12}
+        tickFormatter={(v: number) => `$${v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v}`}
       />
-      <ReferenceLine y={70} stroke="var(--d-high)" strokeDasharray="4 4" />
-      <ReferenceLine y={35} stroke="var(--d-med)" strokeDasharray="4 4" />
       <Tooltip
+        cursor={{ fill: 'var(--gray-50)' }}
+        labelFormatter={(label) => dayLabel(String(label))}
+        formatter={(value, name) => [`$${Number(value).toLocaleString('en-US')}`, String(name)]}
         contentStyle={{
-          background: 'var(--d-panel)',
-          border: '1px solid var(--d-line)',
-          borderRadius: 12,
-          color: 'var(--d-ink)',
+          background: '#fff',
+          border: '1px solid var(--gray-200)',
+          borderRadius: 6,
+          fontSize: 12,
+          boxShadow: 'var(--shadow-md)',
         }}
-        formatter={(value, _name, item) => [
-          `${String(value)} · ${(item.payload as RiskPoint).payee}`,
-          'Risk',
-        ]}
       />
-      <Area
-        type="monotone"
-        dataKey="score"
-        stroke="var(--d-brand)"
-        strokeWidth={2.5}
-        fill="url(#riskFill)"
-        isAnimationActive
+      <Bar
+        dataKey="captured"
+        name="Captured"
+        stackId="v"
+        fill={COLORS.captured}
+        isAnimationActive={false}
       />
-    </AreaChart>
+      <Bar dataKey="held" name="Held" stackId="v" fill={COLORS.held} isAnimationActive={false} />
+      <Bar
+        dataKey="voided"
+        name="Voided"
+        stackId="v"
+        fill={COLORS.voided}
+        radius={[2, 2, 0, 0]}
+        isAnimationActive={false}
+      />
+    </BarChart>
   );
   return (
     <div className="h-56 w-full" data-testid="risk-chart">
@@ -81,6 +85,23 @@ export function RiskChart({ data }: { data: RiskPoint[] }) {
           {chart}
         </ResponsiveContainer>
       )}
+    </div>
+  );
+}
+
+export function ChartLegend() {
+  return (
+    <div className="flex gap-4 text-xs text-[var(--gray-600)]">
+      {(['captured', 'held', 'voided'] as const).map((key) => (
+        <span key={key} className="flex items-center gap-1.5">
+          <span
+            className="h-2 w-2 rounded-sm"
+            style={{ background: COLORS[key] }}
+            aria-hidden="true"
+          />
+          {key[0].toUpperCase() + key.slice(1)}
+        </span>
+      ))}
     </div>
   );
 }
