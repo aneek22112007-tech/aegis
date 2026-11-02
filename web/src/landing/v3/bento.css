@@ -194,3 +194,27 @@
   font-size: 13px;
   color: var(--gray-600);
 }
+
+.bento-hours {
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--gray-200);
+  overflow: hidden;
+}
+
+.bento-hours-quiet {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: var(--gray-800, #1d2939);
+}
+
+.bento-hours-scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--gray-500);
+}

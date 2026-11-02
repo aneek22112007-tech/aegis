@@ -1,5 +1,12 @@
 import './bento.css';
-import { AuthorizeArt, RulesArt, ScoreArt, LureLogArt, ReadAloudArt } from './bentoTiles';
+import {
+  AuthorizeArt,
+  RulesArt,
+  ScoreArt,
+  LureLogArt,
+  ReadAloudArt,
+  QuietHoursArt,
+} from './bentoTiles';
 
 type Size = 'hero' | 'wide' | 'one';
 
@@ -65,6 +72,13 @@ export function Bento() {
         copy="Large type and a read-aloud button on every screen Margaret sees."
       >
         <ReadAloudArt />
+      </Cell>
+      <Cell
+        size="wide"
+        title="Quiet hours"
+        copy="Scammers call late. Payments outside the hours Priya sets are held until someone is awake."
+      >
+        <QuietHoursArt />
       </Cell>
     </div>
   );

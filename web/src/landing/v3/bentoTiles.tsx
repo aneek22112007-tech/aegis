@@ -113,3 +113,25 @@ export function ReadAloudArt() {
     </div>
   );
 }
+
+/** Quiet hours on a 24-hour bar: payments after 9 PM wait until morning. */
+export function QuietHoursArt() {
+  return (
+    <div>
+      <div className="bento-hours" role="presentation">
+        <span className="bento-hours-quiet" style={{ left: `${(21 / 24) * 100}%`, right: 0 }} />
+        <span className="bento-hours-quiet" style={{ left: 0, width: `${(7 / 24) * 100}%` }} />
+      </div>
+      <div className="bento-hours-scale">
+        <span>12 AM</span>
+        <span>6 AM</span>
+        <span>12 PM</span>
+        <span>6 PM</span>
+        <span>12 AM</span>
+      </div>
+      <p className="mt-3 text-[13px] text-[var(--gray-600)]">
+        Quiet from 9 PM to 7 AM. Late-night requests wait for Priya.
+      </p>
+    </div>
+  );
+}
