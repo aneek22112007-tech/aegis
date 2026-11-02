@@ -6,6 +6,7 @@ import { useProductType } from '../ui/useProductType';
 import { MoneyFlow } from './MoneyFlow';
 import { RiskPlayground } from './RiskPlayground';
 import { Story } from './story/Story';
+import { Bento } from './v3/Bento';
 import { MargaretsDay } from './v3/MargaretsDay';
 
 export const FTC_SOURCE =
@@ -149,6 +150,15 @@ export default function LandingPage() {
           lead="Most payments never notice AEGIS. This is the one that does."
         >
           <MargaretsDay />
+        </Section>
+
+        <Section
+          id="features"
+          eyebrow="What it does"
+          title="Small guardrails that add up"
+          lead="Each piece below is running in the sandbox today, with the same engine the server uses."
+        >
+          <Bento />
         </Section>
 
         <Section
