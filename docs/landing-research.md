@@ -21,3 +21,20 @@ We copied techniques, never assets, copy or code.
 
 Public write-ups used to cross-check: Plinth, "Stripe, Linear, Loom: 7 design principles";
 uiscanner, "12 best-designed SaaS websites to study in 2026"; Brainy, "Bento grid design: the 2026 playbook".
+
+## Techniques borrowed
+
+1. **Product-led hero (Linear, Stripe).** The hero shows the real AEGIS screens, not an illustration.
+   For a safety product, seeing the actual "Waiting for Priya" screen is the strongest proof.
+2. **One idea per viewport (Apple).** The scroll story pins one phone and changes one thing at a
+   time, so the cause and effect of a blocked payment is impossible to miss.
+3. **Timestamped day narrative (Monzo/Revolut notifications).** "Margaret's day" is told as
+   real-looking notifications with times, which reads as a record rather than marketing.
+4. **Bento grid with one flagship cell (Linear).** One 2x2 cell for the rule engine, smaller cells
+   for supporting features, one sentence each, re-ordered (not shrunk) on mobile.
+5. **Proof beside every claim (Ramp, Stripe).** Security claims sit next to the exact API calls and
+   webhook headers AEGIS uses.
+6. **Hairline grid and quiet surfaces (Vercel, Mercury).** 1px borders, neutral greys, a single
+   brand blue; colour is reserved for status (green, amber, red).
+7. **Plain money language (Wise).** Amounts in full with separators, no jargon on Margaret's side.
+8. **Honest numbers (Wise, PayPal).** Every statistic links to its primary source.
