@@ -1,5 +1,6 @@
 import './trust.css';
 import { useState } from 'react';
+import { Icon, type IconName } from '../../ui/Icon';
 import { ORDER_STEPS, VERIFY_PATH, WEBHOOK_HEADERS } from './trust';
 
 type Outcome = 'capture' | 'void';
@@ -67,6 +68,36 @@ function WebhookCheck() {
   );
 }
 
+const FACTS: [IconName, string, string][] = [
+  ['lock', 'No card data', 'Cards stay with PayPal. AEGIS never sees or stores a card number.'],
+  [
+    'file',
+    'Every decision on file',
+    'Scores are saved with their reasons and the rules that produced them.',
+  ],
+  [
+    'eye',
+    'Open source',
+    'The rule engine and server are public, so anyone can check how it decides.',
+  ],
+];
+
+function Facts() {
+  return (
+    <ul className="trust-facts">
+      {FACTS.map(([icon, title, body]) => (
+        <li key={title}>
+          <Icon name={icon} className="text-[var(--brand)]" />
+          <div>
+            <p className="trust-label">{title}</p>
+            <p className="trust-when">{body}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export function Trust() {
   return (
     <div className="trust-grid">
@@ -79,6 +110,7 @@ export function Trust() {
         <OrderFlow />
       </div>
       <WebhookCheck />
+      <Facts />
     </div>
   );
 }

@@ -138,3 +138,23 @@
 @media (min-width: 1024px) {
   .trust-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
 }
+
+.trust-facts {
+  display: grid;
+  gap: 20px;
+  padding: 24px 4px 0;
+}
+
+.trust-facts li {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .trust-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1024px) {
+  .trust-facts { grid-column: 1 / -1; }
+}
