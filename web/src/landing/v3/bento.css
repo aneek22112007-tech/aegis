@@ -159,3 +159,38 @@
 .bento-rows li.bento-lure {
   grid-template-columns: minmax(0, 1fr) auto;
 }
+
+.bento-voice {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bento-voice-btn {
+  align-self: flex-start;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--gray-300);
+  background: #fff;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.bento-wave {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 30px;
+}
+
+.bento-wave span {
+  width: 3px;
+  border-radius: 2px;
+  background: var(--brand);
+  opacity: 0.75;
+}
+
+.bento-voice-line {
+  font-size: 13px;
+  color: var(--gray-600);
+}

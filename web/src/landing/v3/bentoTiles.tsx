@@ -97,3 +97,19 @@ export function LureLogArt() {
     </ul>
   );
 }
+
+/** Margaret can have any screen read aloud. */
+export function ReadAloudArt() {
+  const bars = [6, 14, 22, 12, 26, 18, 9, 20, 28, 15, 8, 18, 24, 11, 6];
+  return (
+    <div className="bento-voice">
+      <span className="bento-voice-btn">Read aloud</span>
+      <div className="bento-wave">
+        {bars.map((h, i) => (
+          <span key={i} style={{ height: h }} />
+        ))}
+      </div>
+      <p className="bento-voice-line">“Waiting for Priya to check this payment.”</p>
+    </div>
+  );
+}
