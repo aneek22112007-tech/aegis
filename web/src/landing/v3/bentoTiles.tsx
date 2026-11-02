@@ -135,3 +135,25 @@ export function QuietHoursArt() {
     </div>
   );
 }
+
+/** People Margaret already pays go straight through. */
+export function TrustedArt() {
+  const people: [string, string][] = [
+    ['CVS Pharmacy', 'CV'],
+    ['Helen Carter', 'HC'],
+    ['City Water', 'CW'],
+  ];
+  return (
+    <ul className="flex flex-col gap-2">
+      {people.map(([name, initials]) => (
+        <li key={name} className="bento-person">
+          <span className="bento-avatar">{initials}</span>
+          <span className="truncate">{name}</span>
+          <span className="bento-pill" data-status="captured">
+            Trusted
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}

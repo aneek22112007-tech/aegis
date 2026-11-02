@@ -6,6 +6,7 @@ import {
   LureLogArt,
   ReadAloudArt,
   QuietHoursArt,
+  TrustedArt,
 } from './bentoTiles';
 
 type Size = 'hero' | 'wide' | 'one';
@@ -79,6 +80,13 @@ export function Bento() {
         copy="Scammers call late. Payments outside the hours Priya sets are held until someone is awake."
       >
         <QuietHoursArt />
+      </Cell>
+      <Cell
+        size="one"
+        title="Trusted people"
+        copy="Payees on Margaret's list with normal amounts never wait for anyone."
+      >
+        <TrustedArt />
       </Cell>
     </div>
   );
