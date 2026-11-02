@@ -242,9 +242,14 @@ export default function LandingPage() {
                 The sandbox runs three real scenarios with test data.
               </p>
             </div>
-            <Link to="/demo" className="btn btn-primary btn-lg">
-              Open the sandbox
-            </Link>
+            <div className="flex flex-wrap gap-3">
+              <Link to="/guardian" className="btn btn-secondary btn-lg">
+                See Priya’s dashboard
+              </Link>
+              <Link to="/demo" className="btn btn-primary btn-lg">
+                Open the sandbox
+              </Link>
+            </div>
           </div>
         </section>
       </main>
