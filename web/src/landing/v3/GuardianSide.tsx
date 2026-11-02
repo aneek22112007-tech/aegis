@@ -1,13 +1,10 @@
 import './guardian.css';
-
-const REASONS = [
-  'You have not paid this person before.',
-  'That is over your $500 limit for someone new.',
-  'The note says “urgent” and “keep it safe”.',
-];
+import { scoreScamPayment } from './scamPayment';
 
 /** Priya's phone: the held payment, why it was held, and her two choices. */
 function AlertCard() {
+  const decision = scoreScamPayment();
+  const level = decision.level.charAt(0) + decision.level.slice(1).toLowerCase();
   return (
     <div className="g-card">
       <div className="g-card-head">
@@ -20,10 +17,12 @@ function AlertCard() {
       </p>
       <div className="g-score">
         <span>Risk score</span>
-        <strong>70 · High</strong>
+        <strong>
+          {decision.score} · {level}
+        </strong>
       </div>
       <ul className="g-reasons">
-        {REASONS.map((r) => (
+        {decision.reasons.slice(0, 3).map((r) => (
           <li key={r}>{r}</li>
         ))}
       </ul>
