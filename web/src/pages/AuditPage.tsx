@@ -1,4 +1,5 @@
 import {
+  CellStyleModule,
   ClientSideRowModelModule,
   ModuleRegistry,
   PaginationModule,
@@ -18,7 +19,12 @@ import { Icon } from '../ui/Icon';
 import { formatDateTime, shortId } from '../ui/status';
 
 // Register only what the Lure Log uses instead of AllCommunityModule (smaller chunk).
-ModuleRegistry.registerModules([ClientSideRowModelModule, RowStyleModule, PaginationModule]);
+ModuleRegistry.registerModules([
+  CellStyleModule,
+  ClientSideRowModelModule,
+  RowStyleModule,
+  PaginationModule,
+]);
 
 // Quartz, tuned to the AEGIS system: 13px type, 40px rows, 1px grey borders, brand accent.
 const theme = themeQuartz.withParams({
