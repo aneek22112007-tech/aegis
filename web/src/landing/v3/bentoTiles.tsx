@@ -24,3 +24,25 @@ export function RulesArt() {
     </div>
   );
 }
+
+/** An order is authorized first; only a passing check captures it. */
+export function AuthorizeArt() {
+  const rows: [string, string, string][] = [
+    ['CVS Pharmacy', '$48.00', 'Captured'],
+    ['Helen Carter', '$650.00', 'Authorized'],
+    ['James W.', '$1,900.00', 'Voided'],
+  ];
+  return (
+    <ul className="bento-rows">
+      {rows.map(([who, amount, status]) => (
+        <li key={who}>
+          <span className="truncate">{who}</span>
+          <span className="tabular-nums text-[var(--gray-500)]">{amount}</span>
+          <span className="bento-pill" data-status={status.toLowerCase()}>
+            {status}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}

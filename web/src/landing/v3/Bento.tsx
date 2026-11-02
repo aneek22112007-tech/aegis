@@ -1,5 +1,5 @@
 import './bento.css';
-import { RulesArt } from './bentoTiles';
+import { AuthorizeArt, RulesArt } from './bentoTiles';
 
 type Size = 'hero' | 'wide' | 'one';
 
@@ -37,6 +37,13 @@ export function Bento() {
         copy="Priya types what she wants. The engine turns it into limits it can enforce, and reads them back."
       >
         <RulesArt />
+      </Cell>
+      <Cell
+        size="wide"
+        title="Authorize, then capture"
+        copy="Every payment starts as a PayPal authorization. Risky ones are voided, so there is nothing to refund."
+      >
+        <AuthorizeArt />
       </Cell>
     </div>
   );

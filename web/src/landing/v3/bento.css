@@ -97,3 +97,38 @@
   border-bottom: 2px solid var(--brand);
   transform: rotate(-45deg);
 }
+
+.bento-rows {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.bento-rows li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 9px 12px;
+  font-size: 13px;
+  color: var(--gray-800, #1d2939);
+}
+
+.bento-rows li + li {
+  border-top: 1px solid var(--gray-100, #f2f4f7);
+}
+
+.bento-pill {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--gray-100, #f2f4f7);
+  color: var(--gray-700);
+}
+
+.bento-pill[data-status='captured'] { background: #ecfdf3; color: #067647; }
+.bento-pill[data-status='authorized'] { background: #fffaeb; color: #b54708; }
+.bento-pill[data-status='voided'] { background: #fef3f2; color: #b42318; }
