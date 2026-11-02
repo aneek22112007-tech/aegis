@@ -232,5 +232,5 @@
 
 .nav-link[aria-current='location'] {
   color: var(--gray-900);
-  font-weight: 500;
+  box-shadow: 0 2px 0 var(--brand);
 }
