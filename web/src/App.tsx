@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { DashboardShell } from './dashboard/DashboardShell';
 import { Layout } from './Layout';
 
-// Route-level code splitting keeps three.js, recharts and AG Grid out of the first load.
+// Route-level code splitting keeps recharts and AG Grid out of the first load.
 const LandingPage = lazy(() => import('./landing/LandingPage'));
 const AuditPage = lazy(() => import('./pages/AuditPage').then((m) => ({ default: m.AuditPage })));
 const ConfirmPage = lazy(() =>
@@ -52,7 +52,7 @@ export function AppRoutes() {
       <Route
         path="/"
         element={
-          <Suspense fallback={<div className="min-h-screen bg-[#04060c]" />}>
+          <Suspense fallback={<div className="min-h-screen bg-white" />}>
             <LandingPage />
           </Suspense>
         }

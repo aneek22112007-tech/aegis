@@ -12,12 +12,11 @@ export default defineConfig({
   base,
   plugins: [react(), tailwindcss()],
   build: {
-    // three.js is lazy-loaded only on the landing hero; keep the warning for anything bigger.
+    // AG Grid is the largest chunk; keep the warning for anything bigger.
     chunkSizeWarningLimit: 1300,
     rollupOptions: {
       output: {
         manualChunks: {
-          three: ['three', '@react-three/fiber', '@react-three/drei'],
           grid: ['ag-grid-community', 'ag-grid-react'],
           charts: ['recharts'],
           motion: ['framer-motion'],

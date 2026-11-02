@@ -1,286 +1,512 @@
-import { MotionConfig, motion, useScroll, useSpring } from 'framer-motion';
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldMark } from './ShieldMark';
-import { GuardianPhone } from './GuardianPhone';
-import { HeroCanvas } from './HeroCanvas';
-import { HowItWorks } from './HowItWorks';
-import { LureLogPreview } from './LureLogPreview';
-import { Reveal } from './Reveal';
+import { Chip } from '../ui/Chip';
+import { Icon } from '../ui/Icon';
+import { Logo } from '../ui/Logo';
 import { RiskPlayground } from './RiskPlayground';
-import { StatsBand } from './StatsBand';
-import { TechBento } from './TechBento';
 
-function Nav() {
-  return (
-    <header className="fixed inset-x-0 top-0 z-30">
-      <div className="mx-auto mt-4 flex max-w-6xl items-center gap-6 rounded-2xl border border-white/10 bg-[#04060c]/60 px-5 py-3 backdrop-blur-xl">
-        <Link to="/" className="flex items-center gap-2 font-semibold tracking-wide text-white">
-          <ShieldMark /> AEGIS
-        </Link>
-        <nav aria-label="Landing" className="hidden gap-6 text-sm text-white/60 md:flex">
-          <a href="#problem" className="hover:text-white">
-            Problem
-          </a>
-          <a href="#how" className="hover:text-white">
-            How it works
-          </a>
-          <a href="#try" className="hover:text-white">
-            Try it
-          </a>
-          <a href="#guardian" className="hover:text-white">
-            Guardian
-          </a>
-          <a href="#tech" className="hover:text-white">
-            Tech
-          </a>
-        </nav>
-        <div className="ml-auto flex items-center gap-3 text-sm">
-          <Link to="/guardian" className="hidden text-white/70 hover:text-white sm:inline">
-            Dashboard
-          </Link>
-          <Link
-            to="/demo"
-            className="rounded-xl bg-white px-4 py-2 font-semibold text-black transition hover:bg-emerald-200"
-          >
-            Live demo
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-}
+export const FTC_SOURCE =
+  'https://www.ftc.gov/news-events/news/press-releases/2026/10/ftc-issues-annual-report-congress-agencys-actions-protect-older-adults';
 
-function Hero() {
+const NAV = [
+  { href: '#how', label: 'How it works' },
+  { href: '#checker', label: 'Risk checker' },
+  { href: '#guardian', label: 'Guardian app' },
+  { href: '#security', label: 'Security' },
+  { href: '#faq', label: 'FAQ' },
+];
+
+function Section({
+  id,
+  eyebrow,
+  title,
+  lead,
+  children,
+  muted,
+}: {
+  id: string;
+  eyebrow: string;
+  title: string;
+  lead?: string;
+  children: React.ReactNode;
+  muted?: boolean;
+}) {
   return (
-    <section className="relative min-h-[100svh] overflow-hidden">
-      <div className="absolute inset-0 md:left-[30%]">
-        <HeroCanvas />
-      </div>
-      <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#04060c] via-[#04060c]/80 to-transparent md:via-[#04060c]/40"
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#04060c] to-transparent"
-        aria-hidden="true"
-      />
-      <div className="relative mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-center px-6 pb-20 pt-32">
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-xs font-medium text-emerald-200"
+    <section
+      id={id}
+      aria-labelledby={`${id}-title`}
+      className={`border-t border-[var(--gray-200)] ${muted ? 'bg-[var(--gray-25)]' : 'bg-white'}`}
+    >
+      <div className="mx-auto max-w-6xl px-6 py-20">
+        <p className="text-[13px] font-semibold text-[var(--brand)]">{eyebrow}</p>
+        <h2
+          id={`${id}-title`}
+          className="mt-2 max-w-2xl text-[30px] font-semibold leading-tight tracking-[-0.02em] text-[var(--gray-900)]"
         >
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-300" /> AI consent
-          proxy for PayPal
-        </motion.p>
-        <motion.h1
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1 }}
-          className="mt-6 max-w-3xl text-5xl font-semibold leading-[1.02] tracking-tight text-white md:text-7xl"
-        >
-          Their wishes.{' '}
-          <span className="bg-gradient-to-r from-emerald-200 via-teal-200 to-indigo-300 bg-clip-text text-transparent">
-            Enforced before money moves.
-          </span>
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.25 }}
-          className="mt-6 max-w-xl text-lg text-white/65"
-        >
-          AEGIS turns an older adult’s own plain-English rules into a live policy and checks every
-          PayPal payment against it — capturing the pharmacy, asking the daughter, voiding the scam.
-        </motion.p>
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="mt-9 flex flex-wrap gap-3"
-        >
-          <Link
-            to="/demo"
-            className="rounded-2xl bg-gradient-to-r from-emerald-300 to-teal-300 px-6 py-3.5 font-semibold text-black shadow-[0_0_40px_rgba(52,245,176,0.35)] transition hover:scale-[1.02]"
-          >
-            Run the live demo
-          </Link>
-          <a
-            href="#try"
-            className="rounded-2xl border border-white/15 px-6 py-3.5 font-medium text-white transition hover:bg-white/5"
-          >
-            Try the risk engine
-          </a>
-        </motion.div>
-        <div className="mt-14 flex flex-wrap gap-3 text-sm">
-          {[
-            { t: 'CVS Pharmacy · $48', s: 'Captured', c: 'text-emerald-300 border-emerald-300/30' },
-            {
-              t: 'Helen Brooks · $650',
-              s: 'Held for Priya',
-              c: 'text-amber-200 border-amber-300/30',
-            },
-            {
-              t: 'Officer James · $1,900',
-              s: 'Voided before capture',
-              c: 'text-rose-300 border-rose-300/30',
-            },
-          ].map((chip, i) => (
-            <motion.div
-              key={chip.t}
-              initial={{ opacity: 0, x: -16 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.6 + i * 0.15 }}
-              className={`rounded-2xl border bg-black/40 px-4 py-2.5 backdrop-blur ${chip.c}`}
-            >
-              <span className="text-white/80">{chip.t}</span> · {chip.s}
-            </motion.div>
-          ))}
-        </div>
+          {title}
+        </h2>
+        {lead ? <p className="mt-3 max-w-2xl text-[16px] text-[var(--gray-600)]">{lead}</p> : null}
+        <div className="mt-10">{children}</div>
       </div>
     </section>
   );
 }
 
-export function LandingPage() {
-  const { scrollYProgress } = useScroll();
-  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30 });
-
-  useEffect(() => {
-    const root = document.documentElement;
-    const previous = root.style.fontSize;
-    root.style.fontSize = '16px';
-    document.title = 'AEGIS — consent enforced before money moves';
-    return () => {
-      root.style.fontSize = previous;
-    };
-  }, []);
-
+/** Product mockup: the guardian approval screen on desktop with the senior app beside it. */
+function HeroMock() {
   return (
-    <MotionConfig reducedMotion="user">
-      <div className="landing min-h-screen bg-[#04060c] font-[Inter,ui-sans-serif,system-ui] text-white antialiased">
-        <motion.div
-          className="fixed inset-x-0 top-0 z-40 h-0.5 origin-left bg-gradient-to-r from-emerald-300 to-indigo-400"
-          style={{ scaleX: progress }}
-          aria-hidden="true"
-        />
-        <Nav />
-        <main id="main">
-          <Hero />
-          <StatsBand />
-          <HowItWorks />
-          <section id="try" className="mx-auto max-w-6xl px-6 py-24">
-            <Reveal>
-              <p className="text-sm font-medium uppercase tracking-[0.25em] text-teal-300/80">
-                Try it
-              </p>
-              <h2 className="mt-3 max-w-3xl text-4xl font-semibold tracking-tight text-white md:text-5xl">
-                Type a payment. Watch Margaret’s rules decide.
-              </h2>
-              <p className="mt-4 max-w-2xl text-lg text-white/60">
-                This runs the exact risk engine the server uses — the same rules, weights and
-                thresholds — right in your browser.
-              </p>
-            </Reveal>
-            <Reveal delay={0.1} className="mt-10">
-              <RiskPlayground />
-            </Reveal>
-          </section>
-          <section
-            id="guardian"
-            className="mx-auto grid max-w-6xl items-center gap-14 px-6 py-24 md:grid-cols-2"
-          >
-            <Reveal>
-              <p className="text-sm font-medium uppercase tracking-[0.25em] text-amber-200/80">
-                Guardian
-              </p>
-              <h2 className="mt-3 text-4xl font-semibold tracking-tight text-white md:text-5xl">
-                Help without taking away independence.
-              </h2>
-              <p className="mt-4 text-lg text-white/60">
-                Priya only hears from AEGIS when a payment is unusual. One tap captures it; one tap
-                voids it. Margaret’s screen updates live — “Sent”, or “Stopped, we told your
-                daughter.”
-              </p>
-              <ul className="mt-6 space-y-3 text-white/70">
-                <li>• Plain-language reasons, never a black-box score</li>
-                <li>• Holds auto-void if nobody answers</li>
-                <li>• Large-type, read-aloud senior screens</li>
-              </ul>
-            </Reveal>
-            <Reveal delay={0.15}>
-              <GuardianPhone />
-            </Reveal>
-          </section>
-          <section className="mx-auto max-w-6xl px-6 py-24">
-            <Reveal>
-              <p className="text-sm font-medium uppercase tracking-[0.25em] text-rose-300/80">
-                Lure Log
-              </p>
-              <h2 className="mt-3 max-w-3xl text-4xl font-semibold tracking-tight text-white md:text-5xl">
-                Every decision, with its reasons. Evidence ready.
-              </h2>
-            </Reveal>
-            <Reveal delay={0.1} className="mt-10">
-              <LureLogPreview />
-            </Reveal>
-          </section>
-          <TechBento />
-          <section className="px-6 pb-28 pt-10">
-            <Reveal>
-              <div className="relative mx-auto max-w-5xl overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-emerald-400/15 via-[#0a1020] to-indigo-500/20 px-8 py-16 text-center">
-                <ShieldMark className="mx-auto h-14 w-14" />
-                <h2 className="mt-6 text-4xl font-semibold tracking-tight text-white md:text-5xl">
-                  See a scam get voided in 30 seconds.
-                </h2>
-                <p className="mx-auto mt-4 max-w-xl text-white/60">
-                  Three real flows — trusted, held, stopped — through the same authorize → score →
-                  capture/void pipeline.
-                </p>
-                <div className="mt-8 flex flex-wrap justify-center gap-3">
-                  <Link
-                    to="/demo"
-                    className="rounded-2xl bg-white px-6 py-3.5 font-semibold text-black transition hover:bg-emerald-200"
-                  >
-                    Open the demo
-                  </Link>
-                  <Link
-                    to="/senior"
-                    className="rounded-2xl border border-white/20 px-6 py-3.5 font-medium text-white transition hover:bg-white/5"
-                  >
-                    Margaret’s view
-                  </Link>
-                  <Link
-                    to="/audit"
-                    className="rounded-2xl border border-white/20 px-6 py-3.5 font-medium text-white transition hover:bg-white/5"
-                  >
-                    Lure Log
-                  </Link>
-                </div>
-              </div>
-            </Reveal>
-          </section>
-        </main>
-        <footer className="border-t border-white/10 px-6 py-10 text-sm text-white/40">
-          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4">
-            <p className="flex items-center gap-2">
-              <ShieldMark className="h-5 w-5" /> AEGIS — hackathon prototype. PayPal sandbox only;
-              no real money.
-            </p>
-            <a
-              href="https://github.com/aneek22112007-tech/aegis"
-              className="hover:text-white"
-              target="_blank"
-              rel="noreferrer"
-            >
-              GitHub
-            </a>
+    <div
+      className="relative"
+      data-testid="static-shield"
+      aria-label="AEGIS guardian approval screen"
+      role="img"
+    >
+      <div className="card overflow-hidden shadow-[var(--shadow-lg)]">
+        <div className="flex items-center gap-2 border-b border-[var(--gray-200)] bg-[var(--gray-25)] px-4 py-2.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-[var(--gray-300)]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[var(--gray-300)]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[var(--gray-300)]" />
+          <span className="ml-3 text-xs text-[var(--gray-500)]">
+            Margaret’s household › Approvals
+          </span>
+        </div>
+        <div className="grid grid-cols-[150px_1fr] text-[13px]">
+          <div className="hidden flex-col gap-1 border-r border-[var(--gray-200)] p-3 sm:flex">
+            {['Overview', 'Approvals', 'Lure Log', 'Rules'].map((item, i) => (
+              <span
+                key={item}
+                className={`rounded px-2 py-1.5 ${i === 1 ? 'bg-[var(--brand-50)] font-medium text-[var(--brand)]' : 'text-[var(--gray-600)]'}`}
+              >
+                {item}
+              </span>
+            ))}
           </div>
-        </footer>
+          <div className="col-span-2 p-4 sm:col-span-1">
+            <div className="flex items-center gap-2">
+              <Chip tone="warn">Needs review</Chip>
+              <Chip tone="warn">Risk 52 · Medium</Chip>
+              <span className="ml-auto text-xs text-[var(--gray-500)]">2 min ago</span>
+            </div>
+            <p className="mt-3 text-[18px] font-semibold tracking-[-0.01em]">
+              $650.00 to Helen Brooks
+            </p>
+            <p className="text-[var(--gray-500)]">“Birthday gift”</p>
+            <ul className="mt-3 flex flex-col gap-1 text-[var(--gray-700)]">
+              <li className="border-l-2 border-[var(--gray-300)] pl-2">
+                First payment to this person
+              </li>
+              <li className="border-l-2 border-[var(--gray-300)] pl-2">
+                Above Margaret’s $500 limit for new payees
+              </li>
+            </ul>
+            <div className="mt-4 flex gap-2">
+              <span className="btn btn-danger">Deny</span>
+              <span className="btn btn-primary">Approve</span>
+            </div>
+            <dl className="mt-4 grid grid-cols-2 gap-y-1 border-t border-[var(--gray-200)] pt-3 text-xs">
+              <dt className="text-[var(--gray-500)]">Payment ID</dt>
+              <dd className="mono text-right">pay_8f2k1q0zx3</dd>
+              <dt className="text-[var(--gray-500)]">PayPal status</dt>
+              <dd className="text-right">Authorized, not captured</dd>
+            </dl>
+          </div>
+        </div>
       </div>
-    </MotionConfig>
+      <div className="absolute -bottom-10 -left-6 hidden w-[190px] rounded-[28px] border border-[var(--gray-300)] bg-white p-3 shadow-[var(--shadow-lg)] lg:block">
+        <div className="rounded-[20px] bg-[var(--gray-25)] p-3">
+          <p className="text-[11px] text-[var(--gray-500)]">Margaret’s app</p>
+          <p className="mt-2 text-[15px] font-semibold leading-snug">
+            Your payment is waiting for Priya
+          </p>
+          <p className="mt-1 text-[12px] text-[var(--gray-600)]">
+            $650 to Helen Brooks. Nothing has left your account.
+          </p>
+          <span className="btn btn-secondary mt-3 w-full">OK</span>
+        </div>
+      </div>
+    </div>
   );
 }
 
-export default LandingPage;
+const STEPS = [
+  {
+    n: '1',
+    title: 'Margaret pays as usual',
+    body: 'She enters an amount and a payee in a large-type app. AEGIS asks PayPal to authorize the payment — the money is reserved, not sent.',
+  },
+  {
+    n: '2',
+    title: 'AEGIS scores it against her rules',
+    body: 'The risk engine checks the amount, the payee, her history, the time of day and scam language in the note, then explains each signal.',
+  },
+  {
+    n: '3',
+    title: 'Capture, hold or void',
+    body: 'Below 35 it captures. From 35 to 69 it holds and asks her guardian. At 70 and above it voids the authorization before any money moves.',
+  },
+];
+
+const FAQ = [
+  {
+    q: 'Does AEGIS hold my money?',
+    a: 'No. Payments run through PayPal. AEGIS only decides whether an authorization is captured or voided.',
+  },
+  {
+    q: 'What happens if the guardian doesn’t answer?',
+    a: 'A held payment stays authorized and uncaptured. Nothing is sent until someone approves it, and the authorization expires on its own if no one does.',
+  },
+  {
+    q: 'Can Margaret still pay people she trusts?',
+    a: 'Yes. Payees on her trusted list with normal amounts are captured straight away, without asking anyone.',
+  },
+  {
+    q: 'Is this a live product?',
+    a: 'AEGIS is an open-source project. The hosted sandbox runs fully in your browser with test data; the server version uses the PayPal sandbox.',
+  },
+];
+
+function Faq() {
+  const [open, setOpen] = useState<number | null>(0);
+  return (
+    <div className="card divide-y divide-[var(--gray-200)]">
+      {FAQ.map((item, i) => (
+        <div key={item.q}>
+          <h3>
+            <button
+              type="button"
+              aria-expanded={open === i}
+              className="flex w-full items-center justify-between px-5 py-4 text-left text-[15px] font-medium"
+              onClick={() => setOpen(open === i ? null : i)}
+            >
+              {item.q}
+              <Icon name="chevronDown" className={open === i ? 'rotate-180' : ''} />
+            </button>
+          </h3>
+          {open === i ? (
+            <p className="px-5 pb-4 text-[14px] text-[var(--gray-600)]">{item.a}</p>
+          ) : null}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const LOG = [
+  ['Oct 31, 09:12', 'CVS Pharmacy', '$48.00', 'ok', '12 Low', 'Captured'],
+  ['Oct 31, 14:40', 'Helen Brooks', '$650.00', 'warn', '52 Medium', 'Held'],
+  ['Nov 1, 23:05', 'Officer James', '$1,900.00', 'bad', '100 High', 'Voided'],
+  ['Nov 2, 08:30', 'City Utilities', '$92.00', 'ok', '8 Low', 'Captured'],
+] as const;
+
+export default function LandingPage() {
+  return (
+    <div className="ui min-h-screen bg-white text-[var(--gray-900)]">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2"
+      >
+        Skip to content
+      </a>
+      <header className="sticky top-0 z-30 border-b border-[var(--gray-200)] bg-white/95 backdrop-blur-sm">
+        <div className="mx-auto flex h-16 max-w-6xl items-center gap-8 px-6">
+          <Link to="/" aria-label="AEGIS home">
+            <Logo />
+          </Link>
+          <nav
+            aria-label="Primary"
+            className="hidden gap-6 text-[14px] text-[var(--gray-600)] md:flex"
+          >
+            {NAV.map((item) => (
+              <a key={item.href} href={item.href} className="hover:text-[var(--gray-900)]">
+                {item.label}
+              </a>
+            ))}
+          </nav>
+          <div className="ml-auto flex items-center gap-2">
+            <Link to="/guardian" className="btn hidden text-[var(--gray-700)] sm:inline-flex">
+              Dashboard
+            </Link>
+            <Link to="/demo" className="btn btn-primary">
+              Open sandbox
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      <main id="main">
+        <section className="bg-gradient-to-b from-[var(--gray-25)] to-white">
+          <div className="mx-auto grid max-w-6xl items-center gap-14 px-6 pb-24 pt-16 lg:grid-cols-[1fr_1.1fr] lg:pt-24">
+            <div>
+              <p className="inline-flex items-center gap-2 text-[13px] font-medium text-[var(--gray-600)]">
+                <Icon name="shield" className="text-[var(--brand)]" />
+                Payment guardrails for older adults
+              </p>
+              <h1 className="mt-4 text-[40px] font-semibold leading-[1.1] tracking-[-0.03em] md:text-[52px]">
+                Your parent’s rules,{' '}
+                <span className="text-[var(--gray-500)]">enforced before money moves.</span>
+              </h1>
+              <p className="mt-5 max-w-lg text-[17px] leading-relaxed text-[var(--gray-600)]">
+                AEGIS authorizes each PayPal payment, scores it against the rules your family set,
+                and only captures it when it looks right. Anything unusual waits for a guardian.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link to="/demo" className="btn btn-primary btn-lg">
+                  Run the live demo
+                  <Icon name="arrowRight" />
+                </Link>
+                <a href="#how" className="btn btn-secondary btn-lg">
+                  See how it works
+                </a>
+              </div>
+              <p className="mt-6 text-[13px] text-[var(--gray-500)]">
+                Open source · PayPal Orders v2 · No account needed for the sandbox
+              </p>
+            </div>
+            <HeroMock />
+          </div>
+        </section>
+
+        <section className="border-t border-[var(--gray-200)]">
+          <div className="mx-auto grid max-w-6xl gap-6 px-6 py-10 md:grid-cols-[1fr_2fr] md:items-center">
+            <p className="text-[15px] font-medium">Why it matters</p>
+            <p className="text-[15px] text-[var(--gray-600)]">
+              The FTC’s latest report to Congress on protecting older adults describes billions in
+              reported fraud losses, much of it sent by people who were talked into paying.{' '}
+              <a
+                href={FTC_SOURCE}
+                className="inline-flex items-center gap-1 font-medium text-[var(--brand)] underline-offset-2 hover:underline"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Read the FTC report
+                <Icon name="external" />
+              </a>
+            </p>
+          </div>
+        </section>
+
+        <Section
+          id="how"
+          eyebrow="How it works"
+          title="Authorize first. Decide. Then capture."
+          lead="Most fraud alerts fire after money has left. AEGIS sits between authorization and capture, so a bad payment can be stopped instead of reported."
+        >
+          <ol className="grid gap-px overflow-hidden rounded-lg border border-[var(--gray-200)] bg-[var(--gray-200)] md:grid-cols-3">
+            {STEPS.map((step) => (
+              <li key={step.n} className="bg-white p-6">
+                <span className="mono text-[13px] text-[var(--gray-500)]">Step {step.n}</span>
+                <h3 className="mt-2 text-[16px] font-semibold">{step.title}</h3>
+                <p className="mt-2 text-[14px] leading-relaxed text-[var(--gray-600)]">
+                  {step.body}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </Section>
+
+        <Section
+          id="checker"
+          muted
+          eyebrow="Risk checker"
+          title="Try the same engine the server runs"
+          lead="Pick an example or type your own payment. The score and reasons come from the AEGIS risk engine, running in your browser."
+        >
+          <RiskPlayground />
+        </Section>
+
+        <Section
+          id="guardian"
+          eyebrow="Guardian app"
+          title="One inbox for the payments that need a person"
+          lead="Guardians see why a payment was held, approve or deny it in one tap, and Margaret’s app updates as soon as they do."
+        >
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="card p-5">
+              <div className="flex items-center gap-2">
+                <Chip tone="warn">Needs review</Chip>
+                <span className="ml-auto text-xs text-[var(--gray-500)]">Just now</span>
+              </div>
+              <p className="mt-3 text-[16px] font-semibold">$650.00 to Helen Brooks</p>
+              <p className="text-[13px] text-[var(--gray-500)]">
+                Authorized with PayPal · not captured
+              </p>
+              <div className="mt-4 flex gap-2">
+                <span className="btn btn-danger">Deny</span>
+                <span className="btn btn-primary">Approve</span>
+              </div>
+            </div>
+            <ul className="flex flex-col gap-4 text-[14px] text-[var(--gray-700)]">
+              {[
+                [
+                  'Live updates',
+                  'New holds appear without refreshing, with an optional alert sound.',
+                ],
+                ['Plain-language reasons', 'Every hold lists the signals that triggered it.'],
+                ['Nothing moves while you decide', 'The authorization is reserved, not captured.'],
+              ].map(([title, body]) => (
+                <li key={title} className="flex gap-3">
+                  <Icon name="check" className="mt-0.5 shrink-0 text-[var(--brand)]" />
+                  <span>
+                    <span className="font-medium text-[var(--gray-900)]">{title}.</span> {body}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </Section>
+
+        <Section
+          id="audit"
+          muted
+          eyebrow="Audit log"
+          title="Every decision, on the record"
+          lead="The Lure Log keeps each payment with its score, reasons and outcome. Export it as CSV or download a report for a stopped scam to share with the bank or police."
+        >
+          <div className="card overflow-x-auto">
+            <table className="table min-w-[640px]">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Payee</th>
+                  <th className="text-right">Amount</th>
+                  <th>Risk</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {LOG.map(([date, payee, amount, tone, risk, status]) => (
+                  <tr key={payee}>
+                    <td className="text-[var(--gray-500)]">{date}</td>
+                    <td className="font-medium">{payee}</td>
+                    <td className="text-right tabular-nums">{amount}</td>
+                    <td>
+                      <Chip tone={tone}>{risk}</Chip>
+                    </td>
+                    <td>
+                      <Chip tone={tone}>{status}</Chip>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Section>
+
+        <Section
+          id="security"
+          eyebrow="Security & compliance"
+          title="Built on the payment rails, not around them"
+        >
+          <div className="grid gap-px overflow-hidden rounded-lg border border-[var(--gray-200)] bg-[var(--gray-200)] md:grid-cols-3">
+            {[
+              [
+                'lock',
+                'No card data',
+                'Payments are handled by PayPal. AEGIS never sees or stores card numbers.',
+              ],
+              [
+                'shield',
+                'Authorize-then-capture',
+                'Uses PayPal Orders v2 intent AUTHORIZE, so stopped payments are voided, not refunded.',
+              ],
+              [
+                'file',
+                'Explainable decisions',
+                'Each score is stored with its reasons and the rules version that produced it.',
+              ],
+            ].map(([icon, title, body]) => (
+              <div key={title} className="bg-white p-6">
+                <Icon name={icon as 'lock'} className="text-[var(--brand)]" />
+                <h3 className="mt-3 text-[15px] font-semibold">{title}</h3>
+                <p className="mt-1.5 text-[14px] text-[var(--gray-600)]">{body}</p>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        <Section id="faq" muted eyebrow="FAQ" title="Questions families ask">
+          <div className="max-w-3xl">
+            <Faq />
+          </div>
+        </Section>
+
+        <section className="border-t border-[var(--gray-200)] bg-white">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-6 px-6 py-14">
+            <div>
+              <h2 className="text-[24px] font-semibold tracking-[-0.02em]">
+                See a scam stopped in under a minute
+              </h2>
+              <p className="mt-1 text-[15px] text-[var(--gray-600)]">
+                The sandbox runs three real scenarios with test data.
+              </p>
+            </div>
+            <Link to="/demo" className="btn btn-primary btn-lg">
+              Open the sandbox
+            </Link>
+          </div>
+        </section>
+      </main>
+
+      <footer className="border-t border-[var(--gray-200)] bg-[var(--gray-25)]">
+        <div className="mx-auto grid max-w-6xl gap-8 px-6 py-12 text-[14px] sm:grid-cols-2 md:grid-cols-4">
+          <div>
+            <Logo />
+            <p className="mt-3 text-[13px] text-[var(--gray-500)]">
+              Payment guardrails for families.
+            </p>
+          </div>
+          {[
+            [
+              'Product',
+              [
+                ['Sandbox', '/demo'],
+                ['Guardian dashboard', '/guardian'],
+                ['Lure Log', '/audit'],
+                ['Margaret’s app', '/senior'],
+              ],
+            ],
+            [
+              'Learn',
+              [
+                ['How it works', '#how'],
+                ['Risk checker', '#checker'],
+                ['Security', '#security'],
+                ['FAQ', '#faq'],
+              ],
+            ],
+            [
+              'Resources',
+              [
+                ['FTC report on older adults', FTC_SOURCE],
+                ['Source on GitHub', 'https://github.com/aneek22112007-tech/aegis'],
+              ],
+            ],
+          ].map(([title, links]) => (
+            <div key={title as string}>
+              <p className="font-medium">{title as string}</p>
+              <ul className="mt-3 flex flex-col gap-2 text-[var(--gray-600)]">
+                {(links as string[][]).map(([label, href]) => (
+                  <li key={label}>
+                    {href.startsWith('/') ? (
+                      <Link to={href} className="hover:text-[var(--gray-900)]">
+                        {label}
+                      </Link>
+                    ) : (
+                      <a href={href} className="hover:text-[var(--gray-900)]">
+                        {label}
+                      </a>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <div className="mx-auto max-w-6xl border-t border-[var(--gray-200)] px-6 py-5 text-[12px] text-[var(--gray-500)]">
+          AEGIS is an open-source project and is not affiliated with PayPal. Sandbox data is
+          fictional.
+        </div>
+      </footer>
+    </div>
+  );
+}
