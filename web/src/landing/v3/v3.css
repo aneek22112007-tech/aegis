@@ -39,3 +39,30 @@
   line-height: 1.55;
   color: var(--gray-600);
 }
+
+.day-item {
+  position: relative;
+}
+
+.day-item::before {
+  content: '';
+  position: absolute;
+  left: -21px;
+  top: 21px;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--gray-300);
+  box-shadow: 0 0 0 3px #fff;
+}
+
+.day-item[data-tone='ok']::before { background: var(--green-600, #16a34a); }
+.day-item[data-tone='warn']::before { background: var(--amber-600, #d97706); }
+.day-item[data-tone='stop']::before { background: var(--red-600, #dc2626); }
+.day-item[data-tone='info']::before { background: var(--brand); }
+
+.day-list {
+  padding-left: 22px;
+  border-left: 1px solid var(--gray-200);
+  margin-left: 4px;
+}
