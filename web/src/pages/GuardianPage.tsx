@@ -11,22 +11,28 @@ import {
 } from '../api';
 import { AlertCard } from '../components/AlertCard';
 import { KpiCard } from '../dashboard/KpiCard';
-import { RiskChart } from '../dashboard/RiskChart';
-import { riskSeries, summarize, usd } from '../dashboard/stats';
+import { PaymentDrawer } from '../dashboard/PaymentDrawer';
+import { PaymentsTable } from '../dashboard/PaymentsTable';
+import { ChartLegend, RiskChart } from '../dashboard/RiskChart';
+import { dailyVolume, summarize, usd } from '../dashboard/stats';
+import { Icon } from '../ui/Icon';
 import { playAlert, unlockSound } from '../sound';
 
 export function GuardianPage() {
   const [alerts, setAlerts] = useState<PaymentView[]>([]);
   const [rows, setRows] = useState<AuditRow[]>([]);
-  const [status, setStatus] = useState('Checking for payments that need you.');
+  const [status, setStatus] = useState('Checking for payments to review…');
   const [error, setError] = useState('');
   const [busyId, setBusyId] = useState<string | null>(null);
   const [soundOn, setSoundOn] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState<AuditRow | null>(null);
 
   const refreshAudit = useCallback(() => {
     void getAudit()
       .then((body) => setRows(Array.isArray(body?.payments) ? body.payments : []))
-      .catch(() => undefined);
+      .catch(() => undefined)
+      .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -39,10 +45,10 @@ export function GuardianPage() {
         const waiting = body.alerts.length;
         setStatus(
           waiting === 0
-            ? 'Nothing is waiting. Margaret is all set.'
+            ? 'Nothing needs your review.'
             : waiting === 1
-              ? '1 payment needs a decision.'
-              : `${waiting} payments need a decision.`,
+              ? '1 payment needs your review.'
+              : `${waiting} payments need your review.`,
         );
       })
       .catch((cause: unknown) => {
@@ -77,7 +83,7 @@ export function GuardianPage() {
             ];
           });
           playAlert();
-          setStatus(`${incoming.payeeName} is waiting for you.`);
+          setStatus(`New: ${incoming.amount} to ${incoming.payeeName} needs review.`);
           refreshAudit();
         }
         if (data.type === 'resolved') {
@@ -86,7 +92,7 @@ export function GuardianPage() {
           refreshAudit();
         }
       },
-      () => setError('The live connection dropped. This page will keep trying.'),
+      () => setError('Live updates paused. Reconnecting…'),
     );
     return () => {
       gone = true;
@@ -110,24 +116,21 @@ export function GuardianPage() {
   }
 
   const stats = useMemo(() => summarize(rows), [rows]);
-  const series = useMemo(() => riskSeries(rows), [rows]);
-  const recent = rows.slice(0, 5);
+  const volume = useMemo(() => dailyVolume(rows), [rows]);
+  const recent = rows.slice(0, 8);
 
   return (
     <section className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-sm font-medium text-[var(--d-brand)]">Guardian · Margaret’s account</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight md:text-4xl">
-            Priya, a payment may need you.
-          </h1>
-          <p aria-live="polite" role="status" className="mt-2 text-[var(--d-muted)]">
+          <h1 className="text-[22px] font-semibold tracking-[-0.02em]">Overview</h1>
+          <p aria-live="polite" role="status" className="text-[13px] text-[var(--gray-500)]">
             {status}
           </p>
         </div>
         <button
           type="button"
-          className="rounded-xl border border-[var(--d-line)] px-4 py-2 text-sm font-medium hover:bg-[var(--d-panel-2)]"
+          className="btn btn-secondary"
           aria-pressed={soundOn}
           onClick={() => {
             unlockSound();
@@ -135,140 +138,111 @@ export function GuardianPage() {
             playAlert();
           }}
         >
-          {soundOn ? '🔔 Alert sound is on' : '🔕 Turn on alert sound'}
+          <Icon name="volume" />
+          {soundOn ? 'Alert sound on' : 'Turn on alert sound'}
         </button>
       </div>
 
       {error ? (
         <p
           role="alert"
-          className="rounded-xl px-4 py-3 font-semibold text-white"
-          style={{ background: 'var(--d-high)' }}
+          className="flex items-center gap-2 rounded-md border border-[#f4c7c2] bg-[var(--bad-bg)] px-3 py-2 text-[13px] text-[var(--bad)]"
         >
+          <Icon name="alert" />
           {error}
         </p>
       ) : null}
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="panel grid grid-cols-2 gap-px overflow-hidden bg-[var(--gray-200)] lg:grid-cols-4">
+        <KpiCard label="Sent" value={usd(stats.sentCents)} hint="Captured payments" tone="low" />
         <KpiCard
-          label="Protected"
-          value={usd(stats.protectedCents)}
-          hint="voided before capture"
-          tone="high"
-        />
-        <KpiCard
-          label="Sent safely"
-          value={usd(stats.sentCents)}
-          hint="captured payments"
-          tone="low"
-        />
-        <KpiCard
-          label="Waiting"
+          label="Waiting for review"
           value={String(alerts.length)}
-          hint="held for your decision"
+          hint="Held authorizations"
           tone="med"
         />
         <KpiCard
-          label="Average risk"
+          label="Stopped"
+          value={usd(stats.protectedCents)}
+          hint="Voided before capture"
+          tone="high"
+        />
+        <KpiCard
+          label="Average risk score"
           value={String(stats.averageScore)}
-          hint={`${stats.total} decisions logged`}
+          hint={`Across ${stats.total} payments`}
         />
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
-        <div className="flex flex-col gap-4">
-          <h2 className="text-lg font-semibold">Needs a decision</h2>
+      <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
+        <section id="approvals" aria-labelledby="approvals-title" className="panel scroll-mt-20">
+          <div className="flex items-center justify-between border-b border-[var(--gray-200)] px-5 py-3">
+            <h2 id="approvals-title" className="text-[15px] font-semibold">
+              Approvals
+            </h2>
+            <span className="chip chip-neutral">{alerts.length} open</span>
+          </div>
           {alerts.length === 0 ? (
-            <div className="panel flex flex-col items-center gap-2 p-10 text-center">
-              <span className="text-4xl" aria-hidden="true">
-                🛡️
+            <div className="flex flex-col items-center gap-1 px-5 py-10 text-center">
+              <span className="grid h-9 w-9 place-items-center rounded-full bg-[var(--gray-100)] text-[var(--gray-500)]">
+                <Icon name="inbox" />
               </span>
-              <p className="font-semibold">No payments are waiting.</p>
-              <p className="text-sm text-[var(--d-muted)]">
-                Try the{' '}
-                <Link className="underline" to="/demo">
-                  demo
-                </Link>{' '}
-                — the $650 payment lands here live.
+              <p className="mt-2 text-[13px] font-medium">No payments are waiting.</p>
+              <p className="text-xs text-[var(--gray-500)]">
+                Held payments show up here in real time.{' '}
+                <Link className="text-[var(--brand)] hover:underline" to="/demo">
+                  Send a test payment
+                </Link>
               </p>
             </div>
-          ) : null}
-          {alerts.map((alert) => (
-            <AlertCard
-              key={alert.id}
-              id={alert.id}
-              payeeName={alert.payeeName}
-              amount={alert.amount}
-              note={alert.note}
-              reasons={alert.reasons}
-              score={alert.score}
-              level={alert.level}
-              busy={busyId === alert.id}
-              onApprove={() => void decide(alert.id, 'approve')}
-              onDeny={() => void decide(alert.id, 'deny')}
-            />
-          ))}
-        </div>
-        <div className="flex flex-col gap-4">
-          <div className="panel p-5">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="font-semibold">Risk over time</h2>
-              <span className="text-xs text-[var(--d-muted)]">thresholds 35 · 70</span>
-            </div>
-            <RiskChart data={series} />
-            <div className="mt-3 flex gap-4 text-xs text-[var(--d-muted)]">
-              <span>
-                <b style={{ color: 'var(--d-low)' }}>{stats.byLevel.LOW}</b> low
-              </span>
-              <span>
-                <b style={{ color: 'var(--d-med)' }}>{stats.byLevel.MEDIUM}</b> medium
-              </span>
-              <span>
-                <b style={{ color: 'var(--d-high)' }}>{stats.byLevel.HIGH}</b> high
-              </span>
-            </div>
-          </div>
-          <div className="panel p-5">
-            <div className="mb-2 flex items-center justify-between">
-              <h2 className="font-semibold">Recent activity</h2>
-              <Link to="/audit" className="text-sm text-[var(--d-brand)]">
-                Lure Log →
-              </Link>
-            </div>
-            {recent.length === 0 ? (
-              <p className="text-sm text-[var(--d-muted)]">Nothing yet.</p>
-            ) : null}
-            <ul className="divide-y divide-[var(--d-line)]">
-              {recent.map((row) => (
-                <li key={row.id} className="flex items-center justify-between gap-3 py-3 text-sm">
-                  <span className="min-w-0">
-                    <span className="block truncate font-medium">{row.payeeName}</span>
-                    <span className="text-xs text-[var(--d-muted)]">
-                      {new Date(row.createdAt).toLocaleString()}
-                    </span>
-                  </span>
-                  <span className="text-right">
-                    <span className="block font-mono">{row.amount}</span>
-                    <span
-                      className="text-xs font-semibold uppercase"
-                      style={{
-                        color:
-                          row.level === 'HIGH'
-                            ? 'var(--d-high)'
-                            : row.level === 'MEDIUM'
-                              ? 'var(--d-med)'
-                              : 'var(--d-low)',
-                      }}
-                    >
-                      {row.status}
-                    </span>
-                  </span>
-                </li>
+          ) : (
+            <div className="divide-y divide-[var(--gray-200)]">
+              {alerts.map((alert) => (
+                <AlertCard
+                  key={alert.id}
+                  id={alert.id}
+                  payeeName={alert.payeeName}
+                  amount={alert.amount}
+                  note={alert.note}
+                  reasons={alert.reasons}
+                  score={alert.score}
+                  level={alert.level}
+                  createdAt={alert.createdAt}
+                  busy={busyId === alert.id}
+                  onApprove={() => void decide(alert.id, 'approve')}
+                  onDeny={() => void decide(alert.id, 'deny')}
+                />
               ))}
-            </ul>
+            </div>
+          )}
+        </section>
+
+        <section aria-labelledby="volume-title" className="panel">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--gray-200)] px-5 py-3">
+            <h2 id="volume-title" className="text-[15px] font-semibold">
+              Payment volume
+            </h2>
+            <ChartLegend />
           </div>
-        </div>
+          <div className="px-3 pb-3 pt-4">
+            <RiskChart data={volume} />
+          </div>
+        </section>
       </div>
+
+      <section aria-labelledby="recent-title" className="panel overflow-hidden">
+        <div className="flex items-center justify-between border-b border-[var(--gray-200)] px-5 py-3">
+          <h2 id="recent-title" className="text-[15px] font-semibold">
+            Recent payments
+          </h2>
+          <Link to="/audit" className="text-[13px] font-medium text-[var(--brand)] hover:underline">
+            View all
+          </Link>
+        </div>
+        <PaymentsTable rows={recent} loading={loading} onSelect={setSelected} />
+      </section>
+
+      {selected ? <PaymentDrawer payment={selected} onClose={() => setSelected(null)} /> : null}
     </section>
   );
 }

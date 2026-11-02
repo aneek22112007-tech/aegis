@@ -55,9 +55,11 @@ describe('DemoPage', () => {
       </MemoryRouter>,
     );
     fireEvent.click(screen.getByRole('button', { name: 'Run Helen Brooks $650' }));
-    expect(await screen.findByRole('img', { name: 'Risk score 64 of 100' })).toBeTruthy();
+    expect(await screen.findByText('Risk 64 · Medium')).toBeTruthy();
+    expect(await screen.findByText('guardian.alert.created')).toBeTruthy();
     expect(await screen.findByText('You have not paid this person before.')).toBeTruthy();
-    expect((await screen.findByRole('status')).textContent).toContain('ORDER-123');
+    expect((await screen.findByRole('status')).textContent).toContain('Held for Priya');
+    expect(screen.getAllByText('ORDER-123').length).toBeGreaterThan(0);
     fireEvent.click(screen.getByRole('button', { name: 'Approve' }));
     expect(await screen.findByText('Approved by Priya')).toBeTruthy();
     expect(fetchMock.mock.calls.some(([url]) => String(url).includes('/approve'))).toBe(true);
@@ -82,6 +84,6 @@ describe('DemoPage', () => {
     expect((await screen.findByRole('alert')).textContent).toContain('Server down');
     fireEvent.click(screen.getByRole('button', { name: 'Start over' }));
     expect(screen.queryByRole('alert')).toBeNull();
-    expect(screen.getByText(/Pick a scenario/)).toBeTruthy();
+    expect(screen.getByText(/Choose a scenario/)).toBeTruthy();
   });
 });

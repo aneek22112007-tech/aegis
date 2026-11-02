@@ -1,39 +1,56 @@
 import {
   ClientSideRowModelModule,
   ModuleRegistry,
+  PaginationModule,
   RowStyleModule,
   themeQuartz,
   type ColDef,
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { downloadText, getAudit, type AuditRow } from '../api';
 import { filterAudit } from '../audit/filter';
-import { RiskCell } from '../components/RiskCell';
-import { KpiCard } from '../dashboard/KpiCard';
-import { RiskChart } from '../dashboard/RiskChart';
-import { riskSeries, summarize, usd } from '../dashboard/stats';
+import { RiskCell, StatusCell } from '../components/RiskCell';
+import { PaymentDrawer } from '../dashboard/PaymentDrawer';
+import { summarize, usd } from '../dashboard/stats';
+import { Icon } from '../ui/Icon';
+import { formatDateTime, shortId } from '../ui/status';
 
 // Register only what the Lure Log uses instead of AllCommunityModule (smaller chunk).
-ModuleRegistry.registerModules([ClientSideRowModelModule, RowStyleModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowStyleModule, PaginationModule]);
 
+// Quartz, tuned to the AEGIS system: 13px type, 40px rows, 1px grey borders, brand accent.
 const theme = themeQuartz.withParams({
   fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif',
-  fontSize: 15,
-  backgroundColor: 'var(--d-panel)',
-  foregroundColor: 'var(--d-ink)',
-  borderColor: 'var(--d-line)',
-  headerBackgroundColor: 'var(--d-panel-2)',
-  oddRowBackgroundColor: 'var(--d-panel)',
-  rowHoverColor: 'var(--d-panel-2)',
-  accentColor: 'var(--d-brand)',
-  wrapperBorderRadius: 16,
+  fontSize: 13,
+  headerFontSize: 12,
+  headerFontWeight: 500,
+  headerTextColor: '#6b7486',
+  backgroundColor: '#ffffff',
+  foregroundColor: '#101828',
+  borderColor: '#eceff3',
+  headerBackgroundColor: '#fafbfc',
+  rowHoverColor: '#fafbfc',
+  selectedRowBackgroundColor: '#eef3fc',
+  accentColor: '#1849a9',
+  wrapperBorder: false,
+  wrapperBorderRadius: 0,
+  rowHeight: 44,
+  headerHeight: 36,
+  spacing: 6,
+  cellHorizontalPadding: 16,
 });
 
+const STATUSES = ['ALL', 'captured', 'held', 'voided'] as const;
+
 export function AuditPage() {
+  const [params] = useSearchParams();
   const [rows, setRows] = useState<AuditRow[]>([]);
-  const [query, setQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState(() => params.get('q') ?? '');
   const [level, setLevel] = useState('ALL');
+  const [status, setStatus] = useState<(typeof STATUSES)[number]>('ALL');
   const [selected, setSelected] = useState<AuditRow | null>(null);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
@@ -42,27 +59,61 @@ export function AuditPage() {
     void getAudit()
       .then((body) => setRows(body.payments))
       .catch((cause: unknown) => {
-        setError(cause instanceof Error ? cause.message : 'Please try that again.');
-      });
+        setError(cause instanceof Error ? cause.message : 'Could not load the Lure Log.');
+      })
+      .finally(() => setLoading(false));
   }, []);
 
-  const visible = useMemo(() => filterAudit(rows, query, level), [rows, query, level]);
+  useEffect(() => {
+    const q = params.get('q');
+    if (q !== null) setQuery(q);
+  }, [params]);
+
+  const visible = useMemo(
+    () =>
+      filterAudit(rows, query, level).filter((row) => status === 'ALL' || row.status === status),
+    [rows, query, level, status],
+  );
   const stats = useMemo(() => summarize(rows), [rows]);
-  const series = useMemo(() => riskSeries(rows), [rows]);
 
   const columns = useMemo<ColDef<AuditRow>[]>(
     () => [
       {
         field: 'createdAt',
-        headerName: 'When',
-        flex: 1.2,
-        valueFormatter: (params) => (params.value ? new Date(params.value).toLocaleString() : ''),
+        headerName: 'Date',
+        width: 150,
+        valueFormatter: (p) => (p.value ? formatDateTime(p.value) : ''),
       },
-      { field: 'payeeName', headerName: 'Payee', flex: 1.2 },
-      { field: 'amount', headerName: 'Amount', flex: 0.8 },
-      { field: 'level', headerName: 'Risk', flex: 0.7, cellRenderer: RiskCell },
-      { field: 'decision', headerName: 'Decision', flex: 0.8 },
-      { field: 'status', headerName: 'Status', flex: 0.8 },
+      {
+        field: 'payeeName',
+        headerName: 'Payee',
+        flex: 1.2,
+        minWidth: 140,
+        cellClass: 'font-medium',
+      },
+      {
+        field: 'note',
+        headerName: 'Note',
+        flex: 1.4,
+        minWidth: 160,
+        cellClass: 'text-[var(--gray-500)]',
+      },
+      {
+        field: 'amount',
+        headerName: 'Amount',
+        width: 120,
+        type: 'rightAligned',
+        cellClass: 'tabular-nums font-medium',
+      },
+      { field: 'level', headerName: 'Risk', width: 120, cellRenderer: RiskCell },
+      { field: 'status', headerName: 'Status', width: 120, cellRenderer: StatusCell },
+      {
+        field: 'id',
+        headerName: 'Payment ID',
+        width: 160,
+        valueFormatter: (p) => (p.value ? shortId(p.value) : ''),
+        cellClass: 'mono text-[var(--gray-500)]',
+      },
     ],
     [],
   );
@@ -74,147 +125,161 @@ export function AuditPage() {
       setNotice(`Saved ${filename}`);
     } catch (cause) {
       setNotice('');
-      setError(cause instanceof Error ? cause.message : 'Please try that again.');
+      setError(cause instanceof Error ? cause.message : 'Download failed. Try again.');
     }
   }
 
-  const input =
-    'min-h-11 rounded-xl border border-[var(--d-line)] bg-[var(--d-panel)] px-3 font-normal text-[var(--d-ink)]';
-
   return (
-    <section className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <section className="flex flex-col gap-5">
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-sm font-medium text-[var(--d-brand)]">Audit</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight md:text-4xl">Lure Log</h1>
-          <p className="mt-2 text-[var(--d-muted)]">
-            Every decision AEGIS made, newest first. Choose a row to read why.
+          <h1 className="text-[22px] font-semibold tracking-[-0.02em]">Lure Log</h1>
+          <p className="text-[13px] text-[var(--gray-500)]">
+            Every payment AEGIS checked, with the reasons behind each decision.
           </p>
         </div>
         <button
           type="button"
-          className="rounded-xl px-4 py-2.5 text-sm font-semibold text-black"
-          style={{ background: 'var(--d-brand)' }}
+          className="btn btn-secondary"
           onClick={() => void save('/api/audit/export.csv', 'aegis-lure-log.csv')}
         >
+          <Icon name="download" />
           Download CSV
         </button>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <KpiCard label="Decisions" value={String(stats.total)} hint="logged with reasons" />
-        <KpiCard label="Captured" value={usd(stats.sentCents)} tone="low" />
-        <KpiCard label="Held" value={String(stats.held)} hint="awaiting guardian" tone="med" />
-        <KpiCard
-          label="Voided"
-          value={usd(stats.protectedCents)}
-          hint={`${stats.byLevel.HIGH} high-risk attempts`}
-          tone="high"
-        />
-      </div>
-      <div className="panel p-5">
-        <h2 className="mb-3 font-semibold">Risk score timeline</h2>
-        <RiskChart data={series} />
-      </div>
-      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
-        <label
-          className="flex flex-col gap-1 text-sm font-medium text-[var(--d-muted)]"
-          htmlFor="audit-query"
-        >
-          Find a name or a note
-          <input
-            id="audit-query"
-            className={input}
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-          />
-        </label>
-        <label
-          className="flex flex-col gap-1 text-sm font-medium text-[var(--d-muted)]"
-          htmlFor="audit-level"
-        >
-          Risk
-          <select
-            id="audit-level"
-            className={input}
-            value={level}
-            onChange={(event) => setLevel(event.target.value)}
-          >
-            <option value="ALL">All</option>
-            <option value="LOW">Low</option>
-            <option value="MEDIUM">Medium</option>
-            <option value="HIGH">High</option>
-          </select>
-        </label>
-      </div>
+
+      <dl className="flex flex-wrap gap-x-8 gap-y-2 text-[13px]">
+        <div>
+          <dt className="text-[var(--gray-500)]">Payments</dt>
+          <dd className="font-semibold tabular-nums">{stats.total}</dd>
+        </div>
+        <div>
+          <dt className="text-[var(--gray-500)]">Captured</dt>
+          <dd className="font-semibold tabular-nums">{usd(stats.sentCents)}</dd>
+        </div>
+        <div>
+          <dt className="text-[var(--gray-500)]">Held</dt>
+          <dd className="font-semibold tabular-nums">{stats.held}</dd>
+        </div>
+        <div>
+          <dt className="text-[var(--gray-500)]">Voided</dt>
+          <dd className="font-semibold tabular-nums">{usd(stats.protectedCents)}</dd>
+        </div>
+      </dl>
+
       {error ? (
         <p
           role="alert"
-          className="rounded-xl px-4 py-3 font-semibold text-white"
-          style={{ background: 'var(--d-high)' }}
+          className="flex items-center gap-2 rounded-md border border-[#f4c7c2] bg-[var(--bad-bg)] px-3 py-2 text-[13px] text-[var(--bad)]"
         >
+          <Icon name="alert" />
           {error}
         </p>
       ) : null}
       {notice ? (
-        <p role="status" className="text-sm text-[var(--d-muted)]">
+        <p role="status" className="text-[13px] text-[var(--gray-500)]">
           {notice}
         </p>
       ) : null}
-      <div className="grid gap-6 xl:grid-cols-[1.6fr_1fr]">
-        <div className="h-[420px] w-full" data-testid="lure-log-grid">
+
+      <div className="panel overflow-hidden">
+        <div className="flex flex-wrap items-center gap-2 border-b border-[var(--gray-200)] px-4 py-3">
+          <div className="relative">
+            <Icon
+              name="search"
+              className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--gray-500)]"
+            />
+            <input
+              id="audit-query"
+              aria-label="Find a name or a note"
+              placeholder="Filter by payee, note, or ID"
+              className="input w-64"
+              style={{ paddingLeft: 32 }}
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+            />
+          </div>
+          <label
+            className="flex items-center gap-2 text-[13px] text-[var(--gray-600)]"
+            htmlFor="audit-level"
+          >
+            Risk
+            <select
+              id="audit-level"
+              className="input"
+              value={level}
+              onChange={(event) => setLevel(event.target.value)}
+            >
+              <option value="ALL">All</option>
+              <option value="LOW">Low</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="HIGH">High</option>
+            </select>
+          </label>
+          <div
+            role="group"
+            aria-label="Status"
+            className="flex rounded-md border border-[var(--gray-200)] p-0.5"
+          >
+            {STATUSES.map((value) => (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={status === value}
+                onClick={() => setStatus(value)}
+                className={`h-7 rounded px-2.5 text-[13px] font-medium ${
+                  status === value
+                    ? 'bg-[var(--gray-100)] text-[var(--gray-900)]'
+                    : 'text-[var(--gray-500)] hover:text-[var(--gray-900)]'
+                }`}
+              >
+                {value === 'ALL' ? 'All' : value[0].toUpperCase() + value.slice(1)}
+              </button>
+            ))}
+          </div>
+          <span className="ml-auto text-xs text-[var(--gray-500)]">
+            {loading ? 'Loading…' : `${visible.length} of ${rows.length}`}
+          </span>
+        </div>
+        <div className="h-[520px] w-full" data-testid="lure-log-grid">
           <AgGridReact<AuditRow>
             theme={theme}
             rowData={visible}
             columnDefs={columns}
-            getRowId={(params) => params.data.id}
+            getRowId={(p) => p.data.id}
             onRowClicked={(event) => setSelected(event.data ?? null)}
-            overlayNoRowsTemplate="No decisions yet."
+            pagination
+            paginationPageSize={20}
+            paginationPageSizeSelector={false}
+            loading={loading}
+            overlayNoRowsTemplate="No payments match these filters."
           />
         </div>
-        <section aria-live="polite" className="panel p-6">
-          {selected ? (
-            <>
-              <p className="text-xs font-semibold uppercase tracking-wider text-[var(--d-muted)]">
-                {selected.level ?? '—'} · score {selected.score ?? '—'} · {selected.status}
-              </p>
-              <h2 className="mt-1 text-2xl font-semibold tracking-tight">
-                {selected.amount} to {selected.payeeName}
-              </h2>
-              {selected.note ? (
-                <p className="mt-2 text-[var(--d-muted)]">“{selected.note}”</p>
-              ) : null}
-              {selected.reasons.length > 0 ? (
-                <ul className="mt-4 space-y-2 text-sm">
-                  {selected.reasons.map((reason) => (
-                    <li key={reason} className="rounded-xl bg-[var(--d-panel-2)] px-3 py-2">
-                      {reason}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="mt-3">No extra reasons were recorded.</p>
-              )}
-              {selected.level === 'HIGH' || selected.status === 'voided' ? (
-                <button
-                  type="button"
-                  className="mt-5 w-full rounded-xl border px-5 py-3 font-semibold"
-                  style={{ borderColor: 'var(--d-high)', color: 'var(--d-high)' }}
-                  onClick={() =>
-                    void save(
-                      `/api/payments/${selected.id}/report`,
-                      `aegis-report-${selected.id}.txt`,
-                    )
-                  }
-                >
-                  Download report
-                </button>
-              ) : null}
-            </>
-          ) : (
-            <p className="text-[var(--d-muted)]">Choose a row to read the reasons.</p>
-          )}
-        </section>
       </div>
+
+      {selected ? (
+        <PaymentDrawer
+          payment={selected}
+          onClose={() => setSelected(null)}
+          actions={
+            selected.level === 'HIGH' || selected.status === 'voided' ? (
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() =>
+                  void save(
+                    `/api/payments/${selected.id}/report`,
+                    `aegis-report-${selected.id}.txt`,
+                  )
+                }
+              >
+                <Icon name="download" />
+                Download report
+              </button>
+            ) : null
+          }
+        />
+      ) : null}
     </section>
   );
 }

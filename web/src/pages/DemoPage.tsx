@@ -1,44 +1,48 @@
-import { AnimatePresence, MotionConfig, motion, useReducedMotion } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { approvePayment, DEMO_MODE, denyPayment, runDemo, type PaymentView } from '../api';
+import { TimelineItems } from '../dashboard/PaymentDrawer';
+import { buildTimeline } from '../dashboard/timeline';
 import { resetState } from '../demo/store';
-import { Phone } from '../demo-ui/Phone';
-import { RiskGauge } from '../demo-ui/RiskGauge';
-import {
-  SCENARIOS,
-  STEPS,
-  stepIndex,
-  TONE_COLOR,
-  verdictFor,
-  type Phase,
-  type Scenario,
-} from '../demo-ui/scenarios';
-import { ShieldMark } from '../landing/ShieldMark';
+import { SCENARIOS, TONE_CHIP, verdictFor, type Phase, type Scenario } from '../demo-ui/scenarios';
+import { Chip } from '../ui/Chip';
+import { Icon } from '../ui/Icon';
+import { Logo } from '../ui/Logo';
+import { useProductType } from '../ui/useProductType';
+import { riskChip, shortId, statusChip } from '../ui/status';
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+type LogEvent = { id: string; type: string; at: Date; summary: string; source: 'aegis' | 'paypal' };
+
+function eventId() {
+  return `evt_${Math.random().toString(36).slice(2, 12)}`;
+}
+
+function time(at: Date) {
+  return at.toLocaleTimeString('en-US', { hour12: false });
+}
+
 export function DemoPage() {
-  const reduce = useReducedMotion();
+  const reduce =
+    typeof window !== 'undefined' &&
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   const [active, setActive] = useState<Scenario | null>(null);
   const [phase, setPhase] = useState<Phase>('idle');
   const [payment, setPayment] = useState<PaymentView | null>(null);
   const [guardian, setGuardian] = useState<'approved' | 'denied' | null>(null);
   const [deciding, setDeciding] = useState(false);
   const [error, setError] = useState('');
+  const [events, setEvents] = useState<LogEvent[]>([]);
   const [completed, setCompleted] = useState<string[]>([]);
   const runId = useRef(0);
-  const pace = reduce ? 0 : 750;
+  const pace = reduce ? 0 : 450;
 
-  // The senior screens scale the root font; this page uses the landing page's type scale.
-  useEffect(() => {
-    const root = document.documentElement;
-    const previous = root.style.fontSize;
-    root.style.fontSize = '16px';
-    return () => {
-      root.style.fontSize = previous;
-    };
-  }, []);
+  useProductType();
+
+  function log(type: string, summary: string, source: LogEvent['source'] = 'aegis') {
+    setEvents((list) => [{ id: eventId(), type, at: new Date(), summary, source }, ...list]);
+  }
 
   async function run(scenario: Scenario) {
     const id = ++runId.current;
@@ -47,18 +51,29 @@ export function DemoPage() {
     setGuardian(null);
     setError('');
     setPhase('authorize');
+    log('payment.created', `${scenario.amount} to ${scenario.payee}`);
     try {
       const [body] = await Promise.all([runDemo(scenario.id), wait(pace)]);
       if (id !== runId.current) return;
-      setPayment(body.payment);
+      const p = body.payment;
+      setPayment(p);
+      log(
+        'PAYMENT.AUTHORIZATION.CREATED',
+        `Order ${p.paypalOrderId ?? 'practice'} · intent AUTHORIZE`,
+        'paypal',
+      );
       setPhase('score');
-      await wait(pace * 1.6);
+      await wait(pace);
       if (id !== runId.current) return;
+      log('risk.scored', `Score ${p.score ?? '–'} · ${riskChip(p.level).label}`);
       setPhase('decide');
       await wait(pace);
       if (id !== runId.current) return;
+      if (p.outcome === 'sent') log('PAYMENT.CAPTURE.COMPLETED', `${p.amount} captured`, 'paypal');
+      else if (p.outcome === 'waiting') log('guardian.alert.created', 'Sent to Priya for review');
+      else log('PAYMENT.AUTHORIZATION.VOIDED', 'Voided before capture', 'paypal');
       setPhase('done');
-      if (body.payment.outcome !== 'waiting') markDone(scenario.id);
+      if (p.outcome !== 'waiting') markDone(scenario.id);
     } catch (cause) {
       if (id !== runId.current) return;
       setPhase('error');
@@ -78,6 +93,12 @@ export function DemoPage() {
         choice === 'approved' ? await approvePayment(payment.id) : await denyPayment(payment.id);
       setPayment(body.payment);
       setGuardian(choice);
+      log(`guardian.${choice}`, `Priya ${choice} ${body.payment.amount}`);
+      log(
+        choice === 'approved' ? 'PAYMENT.CAPTURE.COMPLETED' : 'PAYMENT.AUTHORIZATION.VOIDED',
+        choice === 'approved' ? `${body.payment.amount} captured` : 'Voided before capture',
+        'paypal',
+      );
       if (active) markDone(active.id);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Please try that again.');
@@ -94,336 +115,301 @@ export function DemoPage() {
     setGuardian(null);
     setPhase('idle');
     setError('');
+    setEvents([]);
     setCompleted([]);
   }
 
   const busy = phase === 'authorize' || phase === 'score' || phase === 'decide' || deciding;
-  const step = stepIndex(phase);
   const verdict = payment && phase === 'done' ? verdictFor(payment, guardian) : null;
   const waiting = verdict !== null && payment?.outcome === 'waiting';
+  const steps =
+    payment && phase === 'done'
+      ? buildTimeline(payment)
+      : payment
+        ? buildTimeline({
+            ...payment,
+            status: 'authorized',
+            score: phase === 'authorize' ? null : payment.score,
+          })
+        : [];
 
   return (
-    <MotionConfig reducedMotion="user">
-      <div className="landing relative min-h-screen bg-[#04060c] font-[Inter,ui-sans-serif,system-ui] text-white antialiased">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 h-[1100px] bg-[radial-gradient(60%_40%_at_70%_0%,rgba(52,245,176,0.12),transparent),radial-gradient(40%_40%_at_0%_100%,rgba(124,140,255,0.12),transparent)]"
-        />
-        <header className="relative mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
-          <Link to="/" className="flex items-center gap-2 font-semibold tracking-wide">
-            <ShieldMark /> AEGIS
+    <div className="ui min-h-screen bg-[var(--gray-50)] text-[var(--gray-900)]">
+      <div className="bg-[#c2410c] px-4 py-1.5 text-center text-[12px] font-medium text-white">
+        Test mode · Sandbox data only. No real money moves.
+      </div>
+      <header className="border-b border-[var(--gray-200)] bg-white">
+        <div className="mx-auto flex h-14 max-w-6xl items-center gap-4 px-5">
+          <Link to="/" aria-label="AEGIS home">
+            <Logo />
           </Link>
-          <nav aria-label="Demo" className="flex items-center gap-2 text-sm">
-            <Link
-              className="hidden rounded-full px-3 py-2 text-white/70 hover:text-white sm:inline"
-              to="/guardian"
-            >
+          <span className="text-[var(--gray-300)]">/</span>
+          <span className="text-[14px] font-medium">Sandbox</span>
+          <nav aria-label="Demo" className="ml-auto flex items-center gap-1 text-[13px]">
+            <Link className="btn hidden text-[var(--gray-600)] sm:inline-flex" to="/guardian">
               Dashboard
             </Link>
-            <Link
-              className="hidden rounded-full px-3 py-2 text-white/70 hover:text-white sm:inline"
-              to="/audit"
-            >
+            <Link className="btn hidden text-[var(--gray-600)] sm:inline-flex" to="/audit">
               Lure Log
             </Link>
-            <button
-              type="button"
-              onClick={startOver}
-              className="rounded-full border border-white/15 px-4 py-2 font-medium hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#34f5b0]"
-            >
+            <button type="button" onClick={startOver} className="btn btn-secondary">
+              <Icon name="refresh" />
               Start over
             </button>
           </nav>
-        </header>
+        </div>
+      </header>
 
-        <main id="main" className="relative mx-auto max-w-6xl px-5 pb-20">
-          <p className="text-sm font-medium text-[#34f5b0]">Live demo</p>
-          <h1 className="mt-2 text-4xl font-semibold tracking-tight sm:text-5xl">
-            Watch AEGIS decide three payments.
-          </h1>
-          <p className="mt-3 max-w-2xl text-white/65">
-            Each one is authorized, scored against Margaret’s own rules, then captured, held for her
-            daughter Priya, or voided before any money moves.{' '}
-            {DEMO_MODE
-              ? 'This copy runs in your browser with a practice merchant.'
-              : 'With no PayPal login, the server uses a practice merchant.'}
-          </p>
+      <main id="main" className="mx-auto max-w-6xl px-5 py-8">
+        <h1 className="text-[22px] font-semibold tracking-[-0.02em]">Run a test payment</h1>
+        <p className="mt-1 max-w-2xl text-[14px] text-[var(--gray-600)]">
+          Each scenario creates a PayPal order with intent AUTHORIZE, scores it against Margaret’s
+          rules, then captures, holds or voids it.{' '}
+          {DEMO_MODE
+            ? 'This copy runs entirely in your browser.'
+            : 'Without PayPal credentials the server uses a practice merchant.'}
+        </p>
 
-          <ol className="mt-8 grid gap-3 sm:grid-cols-3" aria-label="Scenarios">
-            {SCENARIOS.map((scenario, i) => {
-              const selected = active?.id === scenario.id;
-              const done = completed.includes(scenario.id);
-              return (
-                <li key={scenario.id}>
-                  <button
-                    type="button"
-                    disabled={busy}
-                    aria-pressed={selected}
-                    aria-label={`Run ${scenario.payee} ${scenario.amount}`}
-                    onClick={() => void run(scenario)}
-                    className={`group h-full w-full rounded-2xl border p-5 text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#34f5b0] disabled:cursor-wait ${
-                      selected
-                        ? 'border-white/40 bg-white/[0.08]'
-                        : 'border-white/10 bg-white/[0.03] hover:border-white/25 hover:bg-white/[0.06]'
-                    }`}
-                  >
-                    <span className="flex items-center justify-between text-xs text-white/50">
-                      <span>Scenario {i + 1}</span>
-                      <span
-                        className="rounded-full px-2 py-0.5 font-medium"
-                        style={{
-                          color: TONE_COLOR[scenario.tone],
-                          background: `${TONE_COLOR[scenario.tone]}1a`,
-                        }}
-                      >
-                        {done ? 'Done ✓' : scenario.tag}
-                      </span>
-                    </span>
-                    <span className="mt-3 block text-2xl font-semibold tabular-nums">
-                      {scenario.amount}
-                    </span>
-                    <span className="block font-medium">{scenario.payee}</span>
-                    <span className="mt-1 block text-sm text-white/55">“{scenario.note}”</span>
-                    <span className="mt-4 block text-sm text-white/70">
-                      Expect: {scenario.expect}{' '}
-                      <span aria-hidden="true" className="transition group-hover:translate-x-1">
-                        →
-                      </span>
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
-          </ol>
-
-          {error ? (
-            <p
-              role="alert"
-              className="mt-6 rounded-xl border border-[#ff5c7a]/40 bg-[#ff5c7a]/10 px-4 py-3"
+        <div className="mt-6 grid gap-6 lg:grid-cols-[320px_1fr]">
+          <section aria-labelledby="scenarios-title" className="panel self-start bg-white">
+            <h2
+              id="scenarios-title"
+              className="border-b border-[var(--gray-200)] px-4 py-3 text-[13px] font-semibold"
             >
-              {error}
-            </p>
-          ) : null}
-
-          <section
-            aria-label="Payment pipeline"
-            className="mt-8 grid gap-6 lg:grid-cols-[1.25fr_1fr]"
-          >
-            <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-              {active ? (
-                <>
-                  <p className="text-sm text-white/55">
-                    {active.payee} · {active.amount}
-                  </p>
-                  <ol className="mt-5 space-y-4" aria-live="polite">
-                    {STEPS.map((s, i) => {
-                      const state = step > i ? 'done' : step === i ? 'active' : 'todo';
-                      return (
-                        <li key={s.key} className="flex gap-4">
-                          <span
-                            aria-hidden="true"
-                            className={`mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full border text-sm ${
-                              state === 'done'
-                                ? 'border-[#34f5b0] bg-[#34f5b0]/15 text-[#34f5b0]'
-                                : state === 'active'
-                                  ? 'animate-pulse border-white/60 text-white'
-                                  : 'border-white/15 text-white/40'
-                            }`}
-                          >
-                            {state === 'done' ? '✓' : i + 1}
+              Scenarios
+            </h2>
+            <ul aria-label="Scenarios" className="divide-y divide-[var(--gray-200)]">
+              {SCENARIOS.map((scenario) => {
+                const selected = active?.id === scenario.id;
+                const done = completed.includes(scenario.id);
+                return (
+                  <li key={scenario.id}>
+                    <button
+                      type="button"
+                      disabled={busy}
+                      aria-pressed={selected}
+                      aria-label={`Run ${scenario.payee} ${scenario.amount}`}
+                      onClick={() => void run(scenario)}
+                      className={`flex w-full items-start gap-3 px-4 py-3 text-left disabled:cursor-wait ${
+                        selected ? 'bg-[var(--brand-50)]' : 'hover:bg-[var(--gray-25)]'
+                      }`}
+                    >
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-center justify-between gap-2">
+                          <span className="text-[14px] font-medium">{scenario.payee}</span>
+                          <span className="tabular-nums text-[14px] font-medium">
+                            {scenario.amount}
                           </span>
-                          <div className="min-w-0 flex-1">
-                            <p className={state === 'todo' ? 'text-white/40' : 'font-medium'}>
-                              {s.label}
-                              <span className="sr-only">
-                                {state === 'done'
-                                  ? ' complete'
-                                  : state === 'active'
-                                    ? ' in progress'
-                                    : ''}
-                              </span>
-                            </p>
-                            <p className="text-sm text-white/45">{s.hint}</p>
-                            {s.key === 'authorize' && payment && step >= 1 ? (
-                              <p className="mt-1 font-mono text-xs text-white/60">
-                                Order {payment.paypalOrderId ?? 'practice'} authorized
-                              </p>
-                            ) : null}
-                            {s.key === 'score' && payment && step >= 1 ? (
-                              <motion.div
-                                initial={{ opacity: 0, y: 8 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="mt-3 grid items-start gap-4 sm:grid-cols-[10rem_1fr]"
-                              >
-                                <RiskGauge score={payment.score} />
-                                <ul className="space-y-1.5 text-sm text-white/75">
-                                  {payment.reasons.length ? (
-                                    payment.reasons.map((reason) => (
-                                      <li key={reason} className="flex gap-2">
-                                        <span aria-hidden="true" className="text-white/35">
-                                          •
-                                        </span>
-                                        {reason}
-                                      </li>
-                                    ))
-                                  ) : (
-                                    <li>Nothing unusual. It matches her history.</li>
-                                  )}
-                                </ul>
-                              </motion.div>
-                            ) : null}
-                            {s.key === 'decide' && verdict ? (
-                              <motion.p
-                                initial={{ opacity: 0, scale: 0.96 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                className="mt-2 inline-block rounded-full px-3 py-1 text-sm font-semibold"
-                                style={{
-                                  color: TONE_COLOR[verdict.tone],
-                                  background: `${TONE_COLOR[verdict.tone]}1f`,
-                                }}
-                              >
-                                {verdict.title}
-                              </motion.p>
-                            ) : null}
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ol>
-
-                  <AnimatePresence>
-                    {verdict && payment ? (
-                      <motion.div
-                        key={`${payment.id}-${verdict.title}`}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="mt-6 rounded-2xl border p-5"
-                        style={{ borderColor: `${TONE_COLOR[verdict.tone]}55` }}
-                        role="status"
-                      >
-                        <h2 className="text-xl font-semibold">{payment.message}</h2>
-                        <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-4">
-                          <div>
-                            <dt className="text-white/45">Result</dt>
-                            <dd>{verdict.action}</dd>
-                          </div>
-                          <div>
-                            <dt className="text-white/45">Risk</dt>
-                            <dd className="tabular-nums">{payment.score ?? '–'} / 100</dd>
-                          </div>
-                          <div className="min-w-0">
-                            <dt className="text-white/45">PayPal order</dt>
-                            <dd className="truncate font-mono text-xs leading-5">
-                              {payment.paypalOrderId ?? '—'}
-                            </dd>
-                          </div>
-                          <div className="min-w-0">
-                            <dt className="text-white/45">AEGIS id</dt>
-                            <dd className="truncate font-mono text-xs leading-5">{payment.id}</dd>
-                          </div>
-                        </dl>
-                        <div className="mt-4 flex flex-wrap gap-3 text-sm">
-                          <Link
-                            to="/audit"
-                            className="rounded-full bg-white px-4 py-2 font-medium text-black"
-                          >
-                            Open in Lure Log →
-                          </Link>
-                          {waiting ? (
-                            <a
-                              href="#guardian-phone"
-                              className="self-center text-[#ffc857] underline-offset-4 hover:underline"
-                            >
-                              Decide on Priya’s phone →
-                            </a>
+                        </span>
+                        <span className="block truncate text-[12px] text-[var(--gray-500)]">
+                          “{scenario.note}”
+                        </span>
+                        <span className="mt-1.5 flex items-center gap-2">
+                          <Chip tone={TONE_CHIP[scenario.tone]}>{scenario.tag}</Chip>
+                          {done ? (
+                            <span className="inline-flex items-center gap-1 text-[12px] text-[var(--ok)]">
+                              <Icon name="check" /> Done
+                            </span>
                           ) : (
-                            <NextButton
-                              completed={completed}
-                              onRun={(s) => void run(s)}
-                              disabled={busy}
-                            />
+                            <span className="text-[12px] text-[var(--gray-500)]">
+                              {scenario.expect}
+                            </span>
                           )}
+                        </span>
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+
+          <div className="flex min-w-0 flex-col gap-6">
+            {error ? (
+              <p
+                role="alert"
+                className="flex items-center gap-2 rounded-md border border-[#f4c7c2] bg-[var(--bad-bg)] px-3 py-2 text-[13px] text-[var(--bad)]"
+              >
+                <Icon name="alert" />
+                {error}
+              </p>
+            ) : null}
+
+            <section aria-label="Payment pipeline" className="panel bg-white">
+              {active ? (
+                <div className="grid gap-0 md:grid-cols-[1fr_260px]">
+                  <div className="p-5">
+                    <div className="flex flex-wrap items-center gap-2">
+                      {payment ? (
+                        <Chip
+                          tone={statusChip(phase === 'done' ? payment.status : 'authorized').tone}
+                        >
+                          {phase === 'done' ? statusChip(payment.status).label : 'Processing'}
+                        </Chip>
+                      ) : (
+                        <Chip tone="neutral">Authorizing…</Chip>
+                      )}
+                      {payment && phase !== 'authorize' ? (
+                        <Chip tone={riskChip(payment.level).tone}>
+                          Risk {payment.score ?? '–'} · {riskChip(payment.level).label}
+                        </Chip>
+                      ) : null}
+                    </div>
+                    <p className="mt-3 text-[20px] font-semibold tracking-[-0.01em]">
+                      {active.amount} to {active.payee}
+                    </p>
+                    <p className="text-[13px] text-[var(--gray-500)]">“{active.note}”</p>
+
+                    {verdict && payment ? (
+                      <div
+                        role="status"
+                        className="mt-4 rounded-md border border-[var(--gray-200)] bg-[var(--gray-25)] px-4 py-3"
+                      >
+                        <p className="text-[14px] font-semibold">{verdict.title}</p>
+                        <p className="text-[13px] text-[var(--gray-600)]">{payment.message}</p>
+                      </div>
+                    ) : (
+                      <p role="status" className="mt-4 text-[13px] text-[var(--gray-500)]">
+                        {phase === 'authorize'
+                          ? 'Creating the PayPal authorization…'
+                          : phase === 'error'
+                            ? ''
+                            : 'Scoring against Margaret’s rules…'}
+                      </p>
+                    )}
+
+                    {waiting ? (
+                      <div className="mt-4 rounded-md border border-[#f1d9a6] bg-[var(--warn-bg)] p-4">
+                        <p className="text-[13px] font-medium text-[var(--warn)]">
+                          Priya’s approval inbox
+                        </p>
+                        <p className="mt-1 text-[13px] text-[var(--gray-700)]">
+                          The money is reserved, not sent. Approve to capture or deny to void.
+                        </p>
+                        <div className="mt-3 flex gap-2">
+                          <button
+                            type="button"
+                            disabled={deciding}
+                            onClick={() => void decide('denied')}
+                            className="btn btn-danger"
+                          >
+                            Deny
+                          </button>
+                          <button
+                            type="button"
+                            disabled={deciding}
+                            onClick={() => void decide('approved')}
+                            className="btn btn-primary"
+                          >
+                            Approve
+                          </button>
                         </div>
-                      </motion.div>
+                      </div>
                     ) : null}
-                  </AnimatePresence>
-                </>
+
+                    {payment && payment.reasons.length && phase !== 'authorize' ? (
+                      <>
+                        <h3 className="mt-5 text-[13px] font-semibold">Why AEGIS decided this</h3>
+                        <ul className="mt-2 divide-y divide-[var(--gray-100)] rounded-md border border-[var(--gray-200)] text-[13px]">
+                          {payment.reasons.map((reason) => (
+                            <li key={reason} className="px-3 py-2">
+                              {reason}
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    ) : null}
+
+                    {payment ? (
+                      <dl className="mt-5 grid grid-cols-[120px_1fr] gap-y-1.5 text-[13px]">
+                        <dt className="text-[var(--gray-500)]">Payment ID</dt>
+                        <dd className="mono truncate">{shortId(payment.id)}</dd>
+                        <dt className="text-[var(--gray-500)]">PayPal order</dt>
+                        <dd className="mono truncate">{payment.paypalOrderId ?? '—'}</dd>
+                      </dl>
+                    ) : null}
+
+                    {verdict && !waiting ? (
+                      <div className="mt-5 flex flex-wrap gap-2">
+                        <Link to="/audit" className="btn btn-secondary">
+                          Open in Lure Log
+                        </Link>
+                        <NextButton
+                          completed={completed}
+                          onRun={(s) => void run(s)}
+                          disabled={busy}
+                        />
+                      </div>
+                    ) : null}
+                  </div>
+                  <div className="border-t border-[var(--gray-200)] p-5 md:border-l md:border-t-0">
+                    <h3 className="label mb-3">Timeline</h3>
+                    <ol aria-live="polite">
+                      {steps.length ? (
+                        <TimelineItems steps={steps} />
+                      ) : (
+                        <li className="text-[13px] text-[var(--gray-500)]">Waiting for PayPal…</li>
+                      )}
+                    </ol>
+                  </div>
+                </div>
               ) : (
-                <div className="grid h-full min-h-56 place-items-center text-center text-white/55">
+                <div className="grid min-h-48 place-items-center p-8 text-center text-[13px] text-[var(--gray-500)]">
                   <p>
-                    Pick a scenario above to start.
+                    Choose a scenario to send a test payment.
                     <br />
-                    <span className="text-sm">Tab and Enter work too.</span>
+                    Events will appear in the log below.
                   </p>
                 </div>
               )}
-            </div>
+            </section>
 
-            <div className="grid grid-cols-2 gap-3 self-start sm:gap-5 lg:sticky lg:top-6">
-              <Phone label="Margaret">
-                <p className="text-xs text-white/50">Paying</p>
-                <p className="text-lg font-semibold">{active?.payee ?? 'Choose a payment'}</p>
-                <p className="text-3xl font-semibold tabular-nums">{active?.amount ?? ''}</p>
-                <div className="mt-auto rounded-2xl bg-white/[0.06] p-3 text-sm">
-                  {!active
-                    ? 'Her rules are on.'
-                    : verdict
-                      ? payment?.outcome === 'sent'
-                        ? '✓ Sent.'
-                        : waiting
-                          ? '⏳ Waiting for Priya.'
-                          : '🛡 Stopped. No money moved.'
-                      : 'Checking…'}
+            <section aria-labelledby="events-title" className="panel overflow-hidden bg-white">
+              <div className="flex items-center justify-between border-b border-[var(--gray-200)] px-4 py-3">
+                <h2 id="events-title" className="text-[13px] font-semibold">
+                  Events
+                </h2>
+                <span className="text-[12px] text-[var(--gray-500)]">{events.length} events</span>
+              </div>
+              {events.length ? (
+                <div className="overflow-x-auto">
+                  <table className="table min-w-[560px]" aria-label="Webhook events">
+                    <thead>
+                      <tr>
+                        <th>Time</th>
+                        <th>Event</th>
+                        <th>Details</th>
+                        <th>ID</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {events.map((event) => (
+                        <tr key={event.id}>
+                          <td className="mono whitespace-nowrap text-[var(--gray-500)]">
+                            {time(event.at)}
+                          </td>
+                          <td className="mono whitespace-nowrap">
+                            <span
+                              className={event.source === 'paypal' ? 'text-[var(--brand)]' : ''}
+                            >
+                              {event.type}
+                            </span>
+                          </td>
+                          <td className="text-[var(--gray-600)]">{event.summary}</td>
+                          <td className="mono text-[var(--gray-500)]">{event.id}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-              </Phone>
-              <Phone label="Priya, guardian" id="guardian-phone">
-                <p className="text-xs text-white/50">AEGIS alerts</p>
-                {waiting && payment ? (
-                  <motion.div
-                    initial={{ opacity: 0, y: -12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mt-2 rounded-2xl border border-[#ffc857]/40 bg-[#ffc857]/10 p-3"
-                  >
-                    <p className="text-xs text-[#ffc857]">Needs you</p>
-                    <p className="text-sm font-semibold">
-                      {payment.amount} to {payment.payeeName}
-                    </p>
-                    <div className="mt-3 grid gap-2">
-                      <button
-                        type="button"
-                        disabled={deciding}
-                        onClick={() => void decide('denied')}
-                        className="rounded-xl border border-[#ff5c7a]/60 py-2 text-sm font-semibold text-[#ff5c7a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
-                      >
-                        Deny
-                      </button>
-                      <button
-                        type="button"
-                        disabled={deciding}
-                        onClick={() => void decide('approved')}
-                        className="rounded-xl bg-[#34f5b0] py-2 text-sm font-semibold text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
-                      >
-                        Approve
-                      </button>
-                    </div>
-                  </motion.div>
-                ) : verdict && payment ? (
-                  <p className="mt-2 rounded-2xl bg-white/[0.06] p-3 text-sm">
-                    {guardian
-                      ? `You ${guardian} ${payment.amount} to ${payment.payeeName}.`
-                      : payment.outcome === 'stopped'
-                        ? `Blocked ${payment.payeeName}. A report draft is ready.`
-                        : 'Nothing needs you.'}
-                  </p>
-                ) : (
-                  <p className="mt-2 text-sm text-white/50">All quiet.</p>
-                )}
-              </Phone>
-            </div>
-          </section>
-        </main>
-      </div>
-    </MotionConfig>
+              ) : (
+                <p className="px-4 py-6 text-[13px] text-[var(--gray-500)]">No events yet.</p>
+              )}
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }
 
@@ -437,13 +423,18 @@ function NextButton({
   disabled: boolean;
 }) {
   const next = SCENARIOS.find((s) => !completed.includes(s.id));
-  if (!next) return <span className="self-center text-white/60">All three done.</span>;
+  if (!next)
+    return (
+      <span className="self-center text-[13px] text-[var(--gray-500)]">
+        All three scenarios done.
+      </span>
+    );
   return (
     <button
       type="button"
       disabled={disabled}
       onClick={() => onRun(next)}
-      className="rounded-full border border-white/20 px-4 py-2 font-medium hover:bg-white/10"
+      className="btn btn-primary"
     >
       Next: {next.payee} {next.amount}
     </button>

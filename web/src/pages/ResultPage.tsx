@@ -58,7 +58,7 @@ export function ResultPage() {
         </>
       ) : null}
       <Link
-        className="inline-flex min-h-14 w-full items-center justify-center rounded-xl border-4 border-[var(--ink)] px-5 py-3 text-center font-bold sm:w-auto"
+        className="inline-flex min-h-14 w-full items-center justify-center rounded-xl border-2 border-[var(--ink)] px-5 py-3 text-center font-bold sm:w-auto"
         to="/senior"
       >
         Back home
