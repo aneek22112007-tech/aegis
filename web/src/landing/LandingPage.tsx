@@ -277,6 +277,11 @@ export default function LandingPage() {
               [
                 ['FTC report on older adults', FTC_SOURCE],
                 ['Source on GitHub', 'https://github.com/aneek22112007-tech/aegis'],
+                [
+                  'Design research',
+                  'https://github.com/aneek22112007-tech/aegis/blob/main/docs/landing-research.md',
+                ],
+                ['PayPal Orders v2 docs', 'https://developer.paypal.com/docs/api/orders/v2/'],
               ],
             ],
           ].map(([title, links]) => (
