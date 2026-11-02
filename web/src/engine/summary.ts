@@ -8,6 +8,14 @@ function money(amount: number): string {
   }).format(amount);
 }
 
+/** "21:00" -> "9 PM", "08:30" -> "8:30 AM". */
+export function clock(hhmm: string): string {
+  const [h, m] = hhmm.split(':').map(Number);
+  const suffix = h < 12 ? 'AM' : 'PM';
+  const hour = h % 12 === 0 ? 12 : h % 12;
+  return m ? `${hour}:${String(m).padStart(2, '0')} ${suffix}` : `${hour} ${suffix}`;
+}
+
 export function summarizePolicy(policy: MandatePolicy): string {
   const OFF = 1_000_000_000;
   const sentences: string[] = [];
@@ -33,7 +41,9 @@ export function summarizePolicy(policy: MandatePolicy): string {
     );
   }
   if (policy.quietHours.start !== policy.quietHours.end) {
-    sentences.push(`Quiet hours are ${policy.quietHours.start} to ${policy.quietHours.end}.`);
+    sentences.push(
+      `Quiet hours are ${clock(policy.quietHours.start)} to ${clock(policy.quietHours.end)}.`,
+    );
   }
   sentences.push(
     `If AEGIS is unsure, it asks ${policy.guardian.name} (${policy.guardian.contact}) before any money moves. ${policy.escalation}`,
