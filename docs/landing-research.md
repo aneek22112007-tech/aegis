@@ -38,3 +38,29 @@ uiscanner, "12 best-designed SaaS websites to study in 2026"; Brainy, "Bento gri
    brand blue; colour is reserved for status (green, amber, red).
 7. **Plain money language (Wise).** Amounts in full with separators, no jargon on Margaret's side.
 8. **Honest numbers (Wise, PayPal).** Every statistic links to its primary source.
+
+## What we deliberately did not borrow
+
+- Mesh gradients, dark-mode heroes and glow effects: they read as generic and hurt contrast for
+  older eyes.
+- Logo walls and testimonial carousels: AEGIS has no customers to quote, so we do not invent any.
+- Autoplaying video: heavy, and it ignores reduced-motion settings.
+
+## Section map
+
+| Section | Borrowed from | Why |
+| --- | --- | --- |
+| Hero and scroll story | Linear, Apple | Real UI, one change per step |
+| Margaret's day | Monzo, Revolut | Notifications make a scam timeline concrete |
+| Payment path | Stripe | Animated flow of one payment through each hop |
+| Bento features | Linear, Vercel | Scannable, hierarchy by size |
+| Priya's side | Mercury | Calm approval UI, one decision per card |
+| Trust and security | Stripe, Brex | Real endpoints and headers as proof |
+| Numbers | Wise | Sourced figures only |
+| FAQ and footer | Stripe | Short answers, complete footer |
+
+## Constraints we kept
+
+Light theme, one brand blue (#1849a9), Inter, no gradient text, no emoji, no hype copy.
+Motion respects `prefers-reduced-motion`, heavy chunks load lazily, and every section works at
+390, 1280 and 1920 pixels wide.
