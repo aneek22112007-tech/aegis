@@ -26,7 +26,11 @@ export function KpiCard({
         ) : null}
         {label}
       </p>
-      <p className="mt-1 text-[22px] font-semibold tracking-[-0.02em] tabular-nums">{value}</p>
+      <p className="mt-1 overflow-hidden text-[22px] font-semibold tracking-[-0.02em] tabular-nums">
+        <span key={value} className="kpi-value inline-block">
+          {value}
+        </span>
+      </p>
       {hint ? <p className="text-xs text-[var(--gray-500)]">{hint}</p> : null}
     </div>
   );
