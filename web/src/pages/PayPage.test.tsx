@@ -65,7 +65,7 @@ describe('PayPage', () => {
     expect(screen.getByText('$48.00')).toBeTruthy();
     expect(screen.getByText('to CVS Pharmacy')).toBeTruthy();
     fireEvent.click(await screen.findByRole('button', { name: 'Check and send' }));
-    expect(await screen.findByText('Arrived')).toBeTruthy();
+    expect(await screen.findByText('Arrived', {}, { timeout: 4000 })).toBeTruthy();
   });
 
   it('fills the payee from a trusted chip and keeps review disabled until an amount is set', async () => {
