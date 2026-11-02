@@ -8,6 +8,7 @@ import { RiskPlayground } from './RiskPlayground';
 import { Story } from './story/Story';
 import { Bento } from './v3/Bento';
 import { MargaretsDay } from './v3/MargaretsDay';
+import { Trust } from './v3/Trust';
 
 export const FTC_SOURCE =
   'https://www.ftc.gov/news-events/news/press-releases/2026/10/ftc-issues-annual-report-congress-agencys-actions-protect-older-adults';
@@ -184,32 +185,9 @@ export default function LandingPage() {
           id="security"
           eyebrow="Security & compliance"
           title="Built on the payment rails, not around them"
+          lead="The exact PayPal calls AEGIS makes, taken from the server code."
         >
-          <div className="grid gap-px overflow-hidden rounded-lg border border-[var(--gray-200)] bg-[var(--gray-200)] md:grid-cols-3">
-            {[
-              [
-                'lock',
-                'No card data',
-                'Payments are handled by PayPal. AEGIS never sees or stores card numbers.',
-              ],
-              [
-                'shield',
-                'Authorize-then-capture',
-                'Uses PayPal Orders v2 intent AUTHORIZE, so stopped payments are voided, not refunded.',
-              ],
-              [
-                'file',
-                'Explainable decisions',
-                'Each score is stored with its reasons and the rules version that produced it.',
-              ],
-            ].map(([icon, title, body]) => (
-              <div key={title} className="bg-white p-6">
-                <Icon name={icon as 'lock'} className="text-[var(--brand)]" />
-                <h3 className="mt-3 text-[15px] font-semibold">{title}</h3>
-                <p className="mt-1.5 text-[14px] text-[var(--gray-600)]">{body}</p>
-              </div>
-            ))}
-          </div>
+          <Trust />
         </Section>
 
         <Section id="faq" muted eyebrow="FAQ" title="Questions families ask">
