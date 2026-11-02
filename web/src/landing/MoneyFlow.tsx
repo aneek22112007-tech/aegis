@@ -164,7 +164,7 @@ export function MoneyFlow() {
           />
           {STEPS.map((label, i) => {
             const reached = step > i || done;
-            const blocked = i > stopAt && (done || step > stopAt);
+            const blocked = s.outcome === 'voided' && i > stopAt && (done || step > stopAt);
             const current = !done && step === i;
             return (
               <li key={label} className="relative flex gap-3 md:flex-col md:items-start md:gap-3">
