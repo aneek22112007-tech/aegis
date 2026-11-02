@@ -24,4 +24,12 @@ export const FAQ: { q: string; a: string }[] = [
     q: 'What does AEGIS look for?',
     a: 'New payees above the limit Priya set, unusually large amounts, several payments in a short time, payments during quiet hours, and wording scammers use, such as “urgent”, “gift card” or “bail”.',
   },
+  {
+    q: 'Can a scammer change the rules?',
+    a: 'Rules are set by Priya and saved with the time they were last edited. Margaret’s app has no setting that turns AEGIS off in the middle of a payment.',
+  },
+  {
+    q: 'Where do your numbers come from?',
+    a: 'Every figure on this page is taken from the FTC’s October 2026 report to Congress on protecting older consumers, linked in the Numbers section and the footer.',
+  },
 ];
