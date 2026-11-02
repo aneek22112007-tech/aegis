@@ -32,7 +32,7 @@ export const MARGARETS_DAY: DayEvent[] = [
     id: 'attempt',
     time: '2:47 PM',
     title: 'Tries to send $1,900',
-    detail: 'A new payee, a large amount and urgent wording. AEGIS authorizes the payment but does not capture it.',
+    detail: 'The $1,900 goes to a new payee with urgent wording in the note. AEGIS authorizes the payment but does not capture it.',
     tone: 'stop',
     notice: 'Waiting for Priya to check this payment',
   },
