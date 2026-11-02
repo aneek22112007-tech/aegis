@@ -139,12 +139,12 @@ export function DemoPage() {
         Test mode · Sandbox data only. No real money moves.
       </div>
       <header className="border-b border-[var(--gray-200)] bg-white">
-        <div className="mx-auto flex h-14 max-w-6xl items-center gap-4 px-5">
+        <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4 sm:gap-4 sm:px-5">
           <Link to="/" aria-label="AEGIS home">
             <Logo />
           </Link>
-          <span className="text-[var(--gray-300)]">/</span>
-          <span className="text-[14px] font-medium">Sandbox</span>
+          <span className="hidden text-[var(--gray-300)] sm:inline">/</span>
+          <span className="hidden text-[14px] font-medium sm:inline">Sandbox</span>
           <nav aria-label="Demo" className="ml-auto flex items-center gap-1 text-[13px]">
             <Link className="btn hidden text-[var(--gray-600)] sm:inline-flex" to="/guardian">
               Dashboard
@@ -154,7 +154,8 @@ export function DemoPage() {
             </Link>
             <button type="button" onClick={startOver} className="btn btn-secondary">
               <Icon name="refresh" />
-              Start over
+              <span className="hidden sm:inline">Start over</span>
+              <span className="sm:hidden">Reset</span>
             </button>
           </nav>
         </div>
