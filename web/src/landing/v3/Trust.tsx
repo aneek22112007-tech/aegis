@@ -1,6 +1,6 @@
 import './trust.css';
 import { useState } from 'react';
-import { ORDER_STEPS } from './trust';
+import { ORDER_STEPS, VERIFY_PATH, WEBHOOK_HEADERS } from './trust';
 
 type Outcome = 'capture' | 'void';
 
@@ -45,6 +45,28 @@ function OrderFlow() {
   );
 }
 
+/** How an incoming PayPal webhook is checked before AEGIS believes it. */
+function WebhookCheck() {
+  return (
+    <div className="trust-panel">
+      <h3 className="trust-title">Webhooks are verified before they count</h3>
+      <p className="trust-copy">
+        PayPal signs every event. AEGIS passes the signature headers back to PayPal and ignores
+        anything that does not come back as SUCCESS.
+      </p>
+      <pre className="trust-pre" aria-label="Webhook verification request">
+        <span className="trust-method">POST</span> {VERIFY_PATH}
+        {'\n'}
+        {WEBHOOK_HEADERS.map(
+          (h) => `\n  ${h.toLowerCase().replace('paypal-', '').replace(/-/g, '_')}: <${h}>`,
+        ).join('')}
+        {'\n  webhook_id: <configured id>\n  webhook_event: <raw body>\n\n'}
+        <span className="trust-ok">→ verification_status: "SUCCESS"</span>
+      </pre>
+    </div>
+  );
+}
+
 export function Trust() {
   return (
     <div className="trust-grid">
@@ -56,6 +78,7 @@ export function Trust() {
         </p>
         <OrderFlow />
       </div>
+      <WebhookCheck />
     </div>
   );
 }
