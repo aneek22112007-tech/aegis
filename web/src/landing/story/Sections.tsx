@@ -40,7 +40,9 @@ export function OutcomePanel({ p, index }: { p: StoryPayment; index: number }) {
           ))}
         </ul>
       </div>
-      <div className="outcome-scene relative flex min-h-[560px] items-center justify-center">
+      <div
+        className={`outcome-scene relative flex min-h-[560px] items-center justify-center ${p.key === 'captured' ? 'pr-[14%]' : ''}`}
+      >
         <Device
           label={`Margaret’s app: ${copy.tag.toLowerCase()} ${p.amount} to ${p.payee}`}
           className="outcome-phone"
@@ -56,15 +58,24 @@ export function OutcomePanel({ p, index }: { p: StoryPayment; index: number }) {
           </Device>
         ) : null}
         {p.key === 'voided' ? (
-          <div className="void-card absolute left-[0%] top-[58%]">
+          <div className="void-card absolute left-[0%] top-[68%]">
             <CssCard className="scale-[0.8]" />
             <span className="void-stamp">Voided · $0.00 moved</span>
           </div>
         ) : null}
         {p.key === 'captured' ? (
-          <div className="capture-event absolute left-[2%] top-[20%] rounded-md border border-[var(--gray-200)] bg-white px-3 py-2 text-[12px] shadow-[var(--shadow-md)]">
-            <p className="mono text-[var(--brand)]">PAYMENT.CAPTURE.COMPLETED</p>
-            <p className="text-[var(--gray-500)]">{p.amount}.00 · CVS Pharmacy</p>
+          <div
+            className="capture-event callout-static absolute top-[24%] w-max"
+            style={{ left: 'calc(43% + 150px)' }}
+          >
+            <span className="callout-line" />
+            <span className="callout-body">
+              <span className="callout-label">PayPal webhook</span>
+              <span className="callout-value text-[var(--brand)]">PAYMENT.CAPTURE.COMPLETED</span>
+              <span className="text-[11px] text-[var(--gray-500)]">
+                {p.amount}.00 · CVS Pharmacy
+              </span>
+            </span>
           </div>
         ) : null}
       </div>

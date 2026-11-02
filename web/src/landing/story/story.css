@@ -114,6 +114,11 @@
   transform: translateY(-50%);
   visibility: hidden;
 }
+.callout-static {
+  display: flex;
+  align-items: center;
+  z-index: 2;
+}
 .callout-line {
   position: relative;
   width: 28px;
