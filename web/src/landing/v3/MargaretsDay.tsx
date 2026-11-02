@@ -42,6 +42,9 @@ export function MargaretsDay() {
             <div>
               <h3 className="day-title">{event.title}</h3>
               <p className="day-detail">{event.detail}</p>
+              <p className="day-inline-notice" data-tone={event.tone}>
+                {event.notice}
+              </p>
             </div>
           </li>
         ))}

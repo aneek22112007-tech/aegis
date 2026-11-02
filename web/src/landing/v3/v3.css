@@ -178,3 +178,21 @@
     padding-block: 12vh;
   }
 }
+
+.day-inline-notice {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--gray-100, #f2f4f7);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray-700);
+}
+
+.day-inline-notice[data-tone='stop'] { background: #fef3f2; color: #b42318; }
+.day-inline-notice[data-tone='ok'] { background: #ecfdf3; color: #067647; }
+
+@media (min-width: 1024px) {
+  .day-inline-notice { display: none; }
+}
