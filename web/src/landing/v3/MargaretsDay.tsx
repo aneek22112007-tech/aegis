@@ -48,6 +48,20 @@ export function MargaretsDay() {
             </div>
           </li>
         ))}
+        <li className="day-summary">
+          <div>
+            <p className="day-summary-label">Paid</p>
+            <p className="day-summary-value">$48.00</p>
+          </div>
+          <div>
+            <p className="day-summary-label">Stopped</p>
+            <p className="day-summary-value">$1,900.00</p>
+          </div>
+          <div>
+            <p className="day-summary-label">Refunds needed</p>
+            <p className="day-summary-value">None</p>
+          </div>
+        </li>
       </ol>
     </div>
   );
