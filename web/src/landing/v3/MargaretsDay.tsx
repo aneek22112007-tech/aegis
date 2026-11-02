@@ -1,3 +1,4 @@
+import './v3.css';
 import { MARGARETS_DAY } from './day';
 
 /** Scroll timeline of one day in Margaret's life, from a normal payment to a voided scam. */

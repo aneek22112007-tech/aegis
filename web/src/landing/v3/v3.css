@@ -1,0 +1,41 @@
+/* Landing v3 sections. Light theme, hairline borders, one brand blue. */
+
+.day-list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.day-item {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 16px;
+  padding: 16px 18px;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.day-time {
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--gray-500);
+}
+
+.day-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.day-detail {
+  margin-top: 4px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--gray-600);
+}
