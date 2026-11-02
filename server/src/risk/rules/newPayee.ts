@@ -9,7 +9,7 @@ export function newPayeeRule(input: RiskInput): RuleHit {
   if (input.amount > input.policy.maxNewPayee) {
     points += 18;
     reasons.push(
-      `That is over your $${input.policy.maxNewPayee} limit for someone you have not paid before.`,
+      `That is over your $${input.policy.maxNewPayee.toLocaleString('en-US')} limit for someone you have not paid before.`,
     );
   }
   return { id: 'new-payee', points, reasons };

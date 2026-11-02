@@ -10,7 +10,7 @@ export function StaticStory() {
   return (
     <div data-testid="story-static">
       <section id="story" className="bg-gradient-to-b from-[var(--gray-25)] to-white">
-        <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 pb-20 pt-14 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-6 pb-20 pt-14 lg:grid-cols-2">
           <div>
             <HeroCopy />
           </div>
@@ -22,12 +22,14 @@ export function StaticStory() {
         </div>
       </section>
       <section aria-label="A payment starts" className="border-t border-[var(--gray-200)] bg-white">
-        <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-6 py-20 lg:grid-cols-2">
           <div>
             <StartsCopy />
           </div>
           <div className="flex items-center justify-center gap-6">
-            <CssCard className="hidden sm:flex" />
+            <div className="hidden sm:block">
+              <CssCard />
+            </div>
             <Device
               label={`Margaret confirms ${HELD.amount} to ${HELD.payee}`}
               className="device-sm"
@@ -41,7 +43,7 @@ export function StaticStory() {
         aria-label="AEGIS checks it"
         className="border-t border-[var(--gray-200)] bg-[var(--gray-25)]"
       >
-        <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-6 py-20 lg:grid-cols-2">
           <div>
             <ChecksCopy />
           </div>
