@@ -19,7 +19,7 @@ for (const [width, height] of [
     await expect(page.locator('.callout-check')).toBeVisible();
     const issues = await page.evaluate(() => {
       const phone = document.querySelector('.story-phone')!.getBoundingClientRect();
-      return [...document.querySelectorAll('.callout-body')].flatMap((el) => {
+      return [...document.querySelectorAll('#story .callout-body')].flatMap((el) => {
         const b = el.getBoundingClientRect();
         const hit = !(
           b.right < phone.left ||
