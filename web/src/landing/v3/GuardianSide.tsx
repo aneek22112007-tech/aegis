@@ -40,7 +40,7 @@ function AlertCard() {
           </button>
         </div>
       ) : (
-        <div className="g-result" data-choice={choice}>
+        <div className="g-result" data-choice={choice} role="status">
           <p className="g-result-title">
             {choice === 'denied'
               ? 'Voided. No money left Margaret’s account.'
