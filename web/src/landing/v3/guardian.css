@@ -97,3 +97,37 @@
 .g-actions .btn {
   justify-content: center;
 }
+
+.g-result {
+  margin-top: 18px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #abefc6;
+  background: #ecfdf3;
+}
+
+.g-result[data-choice='approved'] {
+  border-color: #fedf89;
+  background: #fffaeb;
+}
+
+.g-result-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.g-result-sub {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--gray-600);
+}
+
+.g-reset {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--brand);
+}
+
+.g-reset:hover { text-decoration: underline; }
