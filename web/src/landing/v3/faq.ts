@@ -26,7 +26,7 @@ export const FAQ: { q: string; a: string }[] = [
   },
   {
     q: 'Can a scammer change the rules?',
-    a: 'Rules are set by Priya and saved with the time they were last edited. Margaret’s app has no setting that turns AEGIS off in the middle of a payment.',
+    a: 'Every change to the rules is saved with the time it was made, and the summary Priya shares shows when they were last edited, so an unexpected change is easy to spot.',
   },
   {
     q: 'Where do your numbers come from?',
