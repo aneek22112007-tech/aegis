@@ -320,6 +320,14 @@ export default function MotionStory() {
       ctx.revert();
       gsap.ticker.remove(raf);
       lenis.destroy();
+      // Never leave the next route with a locked or hidden page.
+      const html = document.documentElement;
+      html.classList.remove('lenis', 'lenis-smooth', 'lenis-stopped', 'lenis-scrolling');
+      for (const node of [html, document.body]) {
+        node.style.removeProperty('overflow');
+        node.style.removeProperty('opacity');
+        node.style.removeProperty('visibility');
+      }
     };
   }, [webgl]);
 
