@@ -38,7 +38,7 @@ export function MargaretsDay() {
             data-step={i}
             aria-current={i === active ? 'step' : undefined}
           >
-            <time className="day-time">{event.time}</time>
+            <time className="day-time" dateTime={event.iso}>{event.time}</time>
             <div>
               <h3 className="day-title">{event.title}</h3>
               <p className="day-detail">{event.detail}</p>
