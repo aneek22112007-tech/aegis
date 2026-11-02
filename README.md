@@ -99,6 +99,16 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for branches, commits, and checks.
 
 Refresh these with `SCREENSHOTS=1 npx playwright test screenshots`.
 
+The landing page is a scroll-driven story (GSAP ScrollTrigger + Lenis, with a lazy-loaded three.js payment card). Screens under 1024px and anyone with reduced motion get the same chapters as plain stacked sections, with no pinning or WebGL.
+
+![Chapter 1: Margaret's phone turns in](docs/landing-ch1.png)
+
+![Chapter 3: the payment is scored against her rules, with reasons](docs/landing-ch2.png)
+
+![Chapter 4: the held outcome, with Priya's approval on her phone](docs/landing-ch3.png)
+
+![Chapters 5 and 6: Lure Log rows and the FTC figures](docs/landing-ch4.png)
+
 ![Sandbox: three test payments and the webhook-style event log](docs/demo.png)
 
 ![Guardian overview: approvals inbox, volume chart and recent payments](docs/dashboard-guardian.png)
