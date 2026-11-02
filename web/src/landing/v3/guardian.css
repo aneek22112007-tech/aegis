@@ -168,3 +168,8 @@
 @media (min-width: 1024px) {
   .g-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 64px; }
 }
+
+.g-actions .btn:not(.btn-primary) {
+  border: 1px solid var(--gray-300);
+  background: #fff;
+}
