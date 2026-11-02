@@ -305,9 +305,12 @@ export default function LandingPage() {
             </div>
           ))}
         </div>
-        <div className="mx-auto max-w-6xl border-t border-[var(--gray-200)] px-6 py-5 text-[12px] text-[var(--gray-500)]">
-          AEGIS is an open-source project and is not affiliated with PayPal. Sandbox data is
-          fictional.
+        <div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-2 border-t border-[var(--gray-200)] px-6 py-5 text-[12px] text-[var(--gray-500)]">
+          <p>
+            AEGIS is an open-source project and is not affiliated with PayPal. Sandbox data is
+            fictional.
+          </p>
+          <p>Statistics: FTC, Protecting Older Consumers 2025–2026.</p>
         </div>
       </footer>
     </div>
