@@ -1,6 +1,6 @@
 import { heuristicCompile } from '../../engine/heuristic';
 import { evaluateRisk } from '../../engine/evaluate';
-import { summarizePolicy } from '../../engine/summary';
+import { clock, summarizePolicy } from '../../engine/summary';
 
 const GUARDIAN = { name: 'Priya', contact: 'daughter' };
 
@@ -121,12 +121,6 @@ function hourOf(hhmm: string): number {
   return h + (m || 0) / 60;
 }
 
-function clockLabel(hhmm: string): string {
-  const h = Math.floor(hourOf(hhmm));
-  const suffix = h < 12 ? 'AM' : 'PM';
-  return `${h % 12 === 0 ? 12 : h % 12} ${suffix}`;
-}
-
 /** Quiet hours on a 24-hour bar, read from the compiled policy so it always matches. */
 export function QuietHoursArt() {
   const { start, end } = heuristicCompile(SAMPLE_RULES, GUARDIAN).quietHours;
@@ -146,7 +140,7 @@ export function QuietHoursArt() {
         <span>12 AM</span>
       </div>
       <p className="mt-3 text-[13px] text-[var(--gray-600)]">
-        Quiet from {clockLabel(start)} to {clockLabel(end)}. Late-night requests wait for Priya.
+        Quiet from {clock(start)} to {clock(end)}. Late-night requests wait for Priya.
       </p>
     </div>
   );
