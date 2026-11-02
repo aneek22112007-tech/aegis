@@ -10,6 +10,9 @@ import { Bento } from './v3/Bento';
 import { GuardianSide } from './v3/GuardianSide';
 import { MargaretsDay } from './v3/MargaretsDay';
 import { Trust } from './v3/Trust';
+import { FAQ } from './v3/faq';
+import { useActiveSection } from './v3/useActiveSection';
+import { useReveal } from './v3/useReveal';
 
 export const FTC_SOURCE =
   'https://www.ftc.gov/news-events/news/press-releases/2026/10/ftc-issues-annual-report-congress-agencys-actions-protect-older-adults';
@@ -17,8 +20,8 @@ export const FTC_SOURCE =
 const NAV = [
   { href: '#story', label: 'How it works' },
   { href: '#day', label: 'A day' },
-  { href: '#audit', label: 'Lure Log' },
   { href: '#features', label: 'Features' },
+  { href: '#guardian', label: 'Priya’s side' },
   { href: '#security', label: 'Security' },
   { href: '#faq', label: 'FAQ' },
 ];
@@ -38,46 +41,31 @@ function Section({
   children: React.ReactNode;
   muted?: boolean;
 }) {
+  const reveal = useReveal<HTMLDivElement>();
   return (
     <section
       id={id}
       aria-labelledby={`${id}-title`}
       className={`border-t border-[var(--gray-200)] ${muted ? 'bg-[var(--gray-25)]' : 'bg-white'}`}
     >
-      <div className="mx-auto max-w-6xl px-6 py-20">
+      <div ref={reveal} className="mx-auto max-w-6xl px-6 py-20">
         <p className="text-[13px] font-semibold text-[var(--brand)]">{eyebrow}</p>
         <h2
           id={`${id}-title`}
-          className="mt-2 max-w-2xl text-[30px] font-semibold leading-tight tracking-[-0.02em] text-[var(--gray-900)]"
+          className="mt-2 max-w-2xl text-[30px] font-semibold leading-[1.15] tracking-[-0.022em] text-balance text-[var(--gray-900)] lg:text-[36px]"
         >
           {title}
         </h2>
-        {lead ? <p className="mt-3 max-w-2xl text-[16px] text-[var(--gray-600)]">{lead}</p> : null}
+        {lead ? (
+          <p className="mt-3 max-w-2xl text-[16px] leading-relaxed text-pretty text-[var(--gray-600)] lg:text-[17px]">
+            {lead}
+          </p>
+        ) : null}
         <div className="mt-10">{children}</div>
       </div>
     </section>
   );
 }
-
-/** Product mockup: the guardian approval screen on desktop with the senior app beside it. */
-const FAQ = [
-  {
-    q: 'Does AEGIS hold my money?',
-    a: 'No. Payments run through PayPal. AEGIS only decides whether an authorization is captured or voided.',
-  },
-  {
-    q: 'What happens if the guardian doesn’t answer?',
-    a: 'A held payment stays authorized and uncaptured. Nothing is sent until someone approves it, and the authorization expires on its own if no one does.',
-  },
-  {
-    q: 'Can Margaret still pay people she trusts?',
-    a: 'Yes. Payees on her trusted list with normal amounts are captured straight away, without asking anyone.',
-  },
-  {
-    q: 'Is this a live product?',
-    a: 'AEGIS is an open-source project. The hosted sandbox runs fully in your browser with test data; the server version uses the PayPal sandbox.',
-  },
-];
 
 function Faq() {
   const [open, setOpen] = useState<number | null>(0);
@@ -89,6 +77,7 @@ function Faq() {
             <button
               type="button"
               aria-expanded={open === i}
+              aria-controls={`faq-${i}`}
               className="flex w-full items-center justify-between px-5 py-4 text-left text-[15px] font-medium"
               onClick={() => setOpen(open === i ? null : i)}
             >
@@ -96,9 +85,13 @@ function Faq() {
               <Icon name="chevronDown" className={open === i ? 'rotate-180' : ''} />
             </button>
           </h3>
-          {open === i ? (
-            <p className="px-5 pb-4 text-[14px] text-[var(--gray-600)]">{item.a}</p>
-          ) : null}
+          <p
+            id={`faq-${i}`}
+            hidden={open !== i}
+            className="px-5 pb-4 text-[14px] leading-relaxed text-[var(--gray-600)]"
+          >
+            {item.a}
+          </p>
         </div>
       ))}
     </div>
@@ -107,6 +100,7 @@ function Faq() {
 
 export default function LandingPage() {
   useProductType();
+  const active = useActiveSection(NAV.map((item) => item.href.slice(1)));
   return (
     <div className="ui min-h-screen bg-white text-[var(--gray-900)]">
       <a
@@ -116,7 +110,7 @@ export default function LandingPage() {
         Skip to content
       </a>
       <header className="sticky top-0 z-30 border-b border-[var(--gray-200)] bg-white/95 backdrop-blur-sm">
-        <div className="mx-auto flex h-16 max-w-6xl items-center gap-8 px-6">
+        <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4 sm:px-6 md:gap-8">
           <Link to="/" aria-label="AEGIS home">
             <Logo />
           </Link>
@@ -125,11 +119,32 @@ export default function LandingPage() {
             className="hidden gap-6 text-[14px] text-[var(--gray-600)] md:flex"
           >
             {NAV.map((item) => (
-              <a key={item.href} href={item.href} className="hover:text-[var(--gray-900)]">
+              <a
+                key={item.href}
+                href={item.href}
+                aria-current={active === item.href.slice(1) ? 'location' : undefined}
+                className="nav-link hover:text-[var(--gray-900)]"
+              >
                 {item.label}
               </a>
             ))}
           </nav>
+          <details className="nav-menu md:hidden">
+            <summary aria-label="Sections">
+              <Icon name="list" />
+            </summary>
+            <nav aria-label="Sections" className="nav-menu-panel">
+              {NAV.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={(e) => e.currentTarget.closest('details')?.removeAttribute('open')}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+          </details>
           <div className="ml-auto flex items-center gap-2">
             <Link to="/guardian" className="btn hidden text-[var(--gray-700)] sm:inline-flex">
               Dashboard
@@ -204,6 +219,16 @@ export default function LandingPage() {
         <Section id="faq" muted eyebrow="FAQ" title="Questions families ask">
           <div className="max-w-3xl">
             <Faq />
+            <p className="mt-4 text-[14px] text-[var(--gray-600)]">
+              Something else?{' '}
+              <a
+                href="https://github.com/aneek22112007-tech/aegis/issues"
+                className="font-medium text-[var(--brand)] hover:underline"
+              >
+                Ask on GitHub
+              </a>
+              .
+            </p>
           </div>
         </Section>
 
@@ -217,9 +242,14 @@ export default function LandingPage() {
                 The sandbox runs three real scenarios with test data.
               </p>
             </div>
-            <Link to="/demo" className="btn btn-primary btn-lg">
-              Open the sandbox
-            </Link>
+            <div className="flex flex-wrap gap-3">
+              <Link to="/guardian" className="btn btn-secondary btn-lg">
+                See Priya’s dashboard
+              </Link>
+              <Link to="/demo" className="btn btn-primary btn-lg">
+                Open the sandbox
+              </Link>
+            </div>
           </div>
         </section>
       </main>
@@ -246,6 +276,8 @@ export default function LandingPage() {
               'Learn',
               [
                 ['How it works', '#story'],
+                ['Margaret’s day', '#day'],
+                ['Priya’s side', '#guardian'],
                 ['Risk checker', '#checker'],
                 ['Security', '#security'],
                 ['FAQ', '#faq'],
@@ -256,6 +288,11 @@ export default function LandingPage() {
               [
                 ['FTC report on older adults', FTC_SOURCE],
                 ['Source on GitHub', 'https://github.com/aneek22112007-tech/aegis'],
+                [
+                  'Design research',
+                  'https://github.com/aneek22112007-tech/aegis/blob/main/docs/landing-research.md',
+                ],
+                ['PayPal Orders v2 docs', 'https://developer.paypal.com/docs/api/orders/v2/'],
               ],
             ],
           ].map(([title, links]) => (
@@ -279,9 +316,12 @@ export default function LandingPage() {
             </div>
           ))}
         </div>
-        <div className="mx-auto max-w-6xl border-t border-[var(--gray-200)] px-6 py-5 text-[12px] text-[var(--gray-500)]">
-          AEGIS is an open-source project and is not affiliated with PayPal. Sandbox data is
-          fictional.
+        <div className="mx-auto flex max-w-6xl flex-wrap justify-between gap-2 border-t border-[var(--gray-200)] px-6 py-5 text-[12px] text-[var(--gray-500)]">
+          <p>
+            AEGIS is an open-source project and is not affiliated with PayPal. Sandbox data is
+            fictional.
+          </p>
+          <p>Statistics: FTC, Protecting Older Consumers 2025–2026.</p>
         </div>
       </footer>
     </div>

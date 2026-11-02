@@ -42,10 +42,20 @@ export function HeroCopy() {
           Run the live demo
           <Icon name="arrowRight" />
         </Link>
-        <a href="#checker" className="btn btn-secondary btn-lg">
-          Try the risk checker
+        <a href="#day" className="btn btn-secondary btn-lg">
+          See Margaret’s day
         </a>
       </div>
+      <ul className="hero-proof mt-8 flex flex-wrap gap-x-5 gap-y-2 text-[13px] text-[var(--gray-600)]">
+        {['PayPal Orders v2, authorize then capture', 'Rules in plain English', 'Open source'].map(
+          (item) => (
+            <li key={item} className="inline-flex items-center gap-1.5">
+              <Icon name="check" className="text-[var(--brand)]" />
+              {item}
+            </li>
+          ),
+        )}
+      </ul>
     </>
   );
 }
