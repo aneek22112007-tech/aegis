@@ -48,3 +48,11 @@ export const WEBHOOK_HEADERS = [
 ] as const;
 
 export const VERIFY_PATH = '/v1/notifications/verify-webhook-signature';
+
+/** What the webhook handler (server/src/paypal/webhooks.ts) answers in each case. */
+export const WEBHOOK_OUTCOMES: [string, string][] = [
+  ['Signature does not verify', '401, event ignored'],
+  ['Event has no id', '400, event ignored'],
+  ['Same event delivered twice', '200, processed once'],
+  ['Verified and new', '200, payment updated'],
+];

@@ -158,3 +158,24 @@
 @media (min-width: 1024px) {
   .trust-facts { grid-column: 1 / -1; }
 }
+
+.trust-outcomes {
+  margin-top: 16px;
+  font-size: 13px;
+}
+
+.trust-outcomes > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 9px 0;
+  border-top: 1px solid var(--gray-100, #f2f4f7);
+}
+
+.trust-outcomes dt { color: var(--gray-700); }
+
+.trust-outcomes dd {
+  font-variant-numeric: tabular-nums;
+  color: var(--gray-500);
+  text-align: right;
+}

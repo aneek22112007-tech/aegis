@@ -1,7 +1,7 @@
 import './trust.css';
 import { useState } from 'react';
 import { Icon, type IconName } from '../../ui/Icon';
-import { ORDER_STEPS, VERIFY_PATH, WEBHOOK_HEADERS } from './trust';
+import { ORDER_STEPS, VERIFY_PATH, WEBHOOK_HEADERS, WEBHOOK_OUTCOMES } from './trust';
 
 type Outcome = 'capture' | 'void';
 
@@ -64,6 +64,14 @@ function WebhookCheck() {
         {'\n  webhook_id: <configured id>\n  webhook_event: <raw body>\n\n'}
         <span className="trust-ok">→ verification_status: "SUCCESS"</span>
       </pre>
+      <dl className="trust-outcomes">
+        {WEBHOOK_OUTCOMES.map(([when, result]) => (
+          <div key={when}>
+            <dt>{when}</dt>
+            <dd>{result}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
   );
 }
