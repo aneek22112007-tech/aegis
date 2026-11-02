@@ -1,0 +1,99 @@
+/* Priya's side: the guardian alert card and how it reaches her. */
+.g-grid {
+  display: grid;
+  gap: 40px;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+}
+
+.g-card {
+  width: 100%;
+  max-width: 380px;
+  margin-inline: auto;
+  padding: 20px;
+  border: 1px solid var(--gray-200);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 24px 48px -28px rgb(16 24 40 / 0.3);
+}
+
+.g-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.g-badge {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #fffaeb;
+  color: #b54708;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.g-time {
+  font-size: 12px;
+  color: var(--gray-500);
+  font-variant-numeric: tabular-nums;
+}
+
+.g-amount {
+  margin-top: 14px;
+  font-size: 34px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.g-who {
+  font-size: 14px;
+  color: var(--gray-600);
+}
+
+.g-score {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fef3f2;
+  font-size: 13px;
+  color: #b42318;
+}
+
+.g-reasons {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--gray-700);
+}
+
+.g-reasons li {
+  padding-left: 14px;
+  position: relative;
+}
+
+.g-reasons li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--gray-400, #98a2b3);
+}
+
+.g-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.g-actions .btn {
+  justify-content: center;
+}
