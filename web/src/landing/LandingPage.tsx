@@ -265,6 +265,8 @@ export default function LandingPage() {
               'Learn',
               [
                 ['How it works', '#story'],
+                ['Margaret’s day', '#day'],
+                ['Priya’s side', '#guardian'],
                 ['Risk checker', '#checker'],
                 ['Security', '#security'],
                 ['FAQ', '#faq'],
