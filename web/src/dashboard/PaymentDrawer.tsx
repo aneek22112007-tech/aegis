@@ -2,7 +2,7 @@ import { useEffect, useRef, type ReactNode } from 'react';
 import { Chip } from '../ui/Chip';
 import { Icon } from '../ui/Icon';
 import { formatDateTime, riskChip, shortId, statusChip } from '../ui/status';
-import { buildTimeline } from './timeline';
+import { buildTimeline, type TimelineStep } from './timeline';
 
 export type DrawerPayment = {
   id: string;
@@ -96,30 +96,7 @@ export function PaymentDrawer({
 
           <h3 className="mt-5 text-[13px] font-semibold">Timeline</h3>
           <ol className="mt-3" aria-label="Payment timeline">
-            {steps.map((step, i) => (
-              <li key={step.key} className="relative flex gap-3 pb-4 last:pb-0">
-                {i < steps.length - 1 ? (
-                  <span
-                    className="absolute left-[7px] top-4 h-full w-px bg-[var(--gray-200)]"
-                    aria-hidden="true"
-                  />
-                ) : null}
-                <span
-                  aria-hidden="true"
-                  className={`relative mt-1 h-[15px] w-[15px] shrink-0 rounded-full border-2 bg-white ${
-                    step.state === 'failed'
-                      ? 'border-[var(--bad)]'
-                      : step.state === 'current'
-                        ? 'border-[#b7791f]'
-                        : 'border-[var(--ok)]'
-                  }`}
-                />
-                <div>
-                  <p className="text-[13px] font-medium">{step.label}</p>
-                  <p className="text-xs text-[var(--gray-500)]">{step.detail}</p>
-                </div>
-              </li>
-            ))}
+            <TimelineItems steps={steps} />
           </ol>
 
           <h3 className="mt-6 text-[13px] font-semibold">Why AEGIS decided this</h3>
@@ -144,5 +121,36 @@ export function PaymentDrawer({
         ) : null}
       </aside>
     </div>
+  );
+}
+
+export function TimelineItems({ steps }: { steps: TimelineStep[] }) {
+  return (
+    <>
+      {steps.map((step, i) => (
+        <li key={step.key} className="relative flex gap-3 pb-4 last:pb-0">
+          {i < steps.length - 1 ? (
+            <span
+              className="absolute left-[7px] top-4 h-full w-px bg-[var(--gray-200)]"
+              aria-hidden="true"
+            />
+          ) : null}
+          <span
+            aria-hidden="true"
+            className={`relative mt-1 h-[15px] w-[15px] shrink-0 rounded-full border-2 bg-white ${
+              step.state === 'failed'
+                ? 'border-[var(--bad)]'
+                : step.state === 'current'
+                  ? 'border-[#b7791f]'
+                  : 'border-[var(--ok)]'
+            }`}
+          />
+          <div>
+            <p className="text-[13px] font-medium">{step.label}</p>
+            <p className="text-xs text-[var(--gray-500)]">{step.detail}</p>
+          </div>
+        </li>
+      ))}
+    </>
   );
 }

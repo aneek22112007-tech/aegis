@@ -100,4 +100,4 @@ export function toneFor(score: number): 'low' | 'medium' | 'high' {
   return 'low';
 }
 
-export const TONE_COLOR = { low: '#34f5b0', medium: '#ffc857', high: '#ff5c7a' } as const;
+export const TONE_CHIP = { low: 'ok', medium: 'warn', high: 'bad' } as const;
