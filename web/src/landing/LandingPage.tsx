@@ -16,7 +16,7 @@ const NAV = [
   { href: '#story', label: 'How it works' },
   { href: '#day', label: 'A day' },
   { href: '#audit', label: 'Lure Log' },
-  { href: '#checker', label: 'Risk checker' },
+  { href: '#features', label: 'Features' },
   { href: '#security', label: 'Security' },
   { href: '#faq', label: 'FAQ' },
 ];
