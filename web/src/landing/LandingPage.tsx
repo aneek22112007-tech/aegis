@@ -6,13 +6,14 @@ import { useProductType } from '../ui/useProductType';
 import { MoneyFlow } from './MoneyFlow';
 import { RiskPlayground } from './RiskPlayground';
 import { Story } from './story/Story';
+import { MargaretsDay } from './v3/MargaretsDay';
 
 export const FTC_SOURCE =
   'https://www.ftc.gov/news-events/news/press-releases/2026/10/ftc-issues-annual-report-congress-agencys-actions-protect-older-adults';
 
 const NAV = [
   { href: '#story', label: 'How it works' },
-  { href: '#outcomes', label: 'Outcomes' },
+  { href: '#day', label: 'A day' },
   { href: '#audit', label: 'Lure Log' },
   { href: '#checker', label: 'Risk checker' },
   { href: '#security', label: 'Security' },
@@ -139,6 +140,16 @@ export default function LandingPage() {
 
       <main id="main">
         <Story />
+
+        <Section
+          id="day"
+          muted
+          eyebrow="A day with AEGIS"
+          title="One Tuesday, from a pharmacy bill to a stopped scam"
+          lead="Most payments never notice AEGIS. This is the one that does."
+        >
+          <MargaretsDay />
+        </Section>
 
         <Section
           id="path"
