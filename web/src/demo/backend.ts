@@ -1,6 +1,7 @@
 import { seniorMessage } from '../engine/copy';
 import { toCsv } from '../engine/csv';
 import { evaluateRisk } from '../engine/evaluate';
+import { applyOverrides, loadOverrides } from '../rules/overrides';
 import { buildFtcReport } from '../engine/ftc';
 import { heuristicCompile } from '../engine/heuristic';
 import { dollarsToCents, formatUsd } from '../engine/money';
@@ -52,7 +53,7 @@ function randomId(prefix: string): string {
 }
 
 function policyOf(state: DemoState) {
-  return heuristicCompile(state.mandateText, GUARDIAN);
+  return applyOverrides(heuristicCompile(state.mandateText, GUARDIAN), loadOverrides());
 }
 
 function mandateOf(state: DemoState) {
