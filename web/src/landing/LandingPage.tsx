@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Icon } from '../ui/Icon';
 import { Logo } from '../ui/Logo';
 import { useProductType } from '../ui/useProductType';
+import { MoneyFlow } from './MoneyFlow';
 import { RiskPlayground } from './RiskPlayground';
 import { Story } from './story/Story';
 
@@ -138,6 +139,15 @@ export default function LandingPage() {
 
       <main id="main">
         <Story />
+
+        <Section
+          id="path"
+          eyebrow="Payment path"
+          title="Follow one payment through every hop"
+          lead="Money only moves after the rules agree. Pick a payment to see where it stops."
+        >
+          <MoneyFlow />
+        </Section>
 
         <Section
           id="checker"

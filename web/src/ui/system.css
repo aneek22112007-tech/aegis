@@ -239,3 +239,110 @@
     transition-duration: 0.001ms !important;
   }
 }
+
+/* Landing: payment path vignette */
+.flow-track {
+  --node: 28px;
+}
+.flow-rail,
+.flow-fill {
+  position: absolute;
+  pointer-events: none;
+  background: var(--gray-200);
+}
+.flow-rail {
+  left: calc(var(--node) / 2 - 1px);
+  top: 14px;
+  bottom: 14px;
+  width: 2px;
+}
+.flow-fill {
+  left: calc(var(--node) / 2 - 1px);
+  top: 14px;
+  width: 2px;
+  height: calc((100% - 28px) * var(--p, 0));
+  background: var(--brand);
+  transition:
+    height 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+    width 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+    background-color 0.3s;
+}
+@media (min-width: 768px) {
+  .flow-rail {
+    top: calc(var(--node) / 2 - 1px);
+    bottom: auto;
+    left: 14px;
+    right: calc(25% - 14px);
+    width: auto;
+    height: 2px;
+  }
+  .flow-fill {
+    top: calc(var(--node) / 2 - 1px);
+    left: 14px;
+    height: 2px;
+    width: calc((75% - 28px + 14px) * var(--p, 0));
+  }
+}
+.flow-node {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: var(--node);
+  height: var(--node);
+  border: 1.5px solid var(--gray-300);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--gray-500);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  transition:
+    border-color 0.3s,
+    background-color 0.3s,
+    color 0.3s,
+    transform 0.3s;
+}
+.flow-node.is-current {
+  border-color: var(--brand);
+  color: var(--brand);
+  transform: scale(1.08);
+}
+.flow-node.is-reached {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: #fff;
+}
+.flow-node.is-blocked {
+  border-style: dashed;
+  color: var(--gray-300);
+}
+.flow-fill.flow-held {
+  background: #b7791f;
+}
+.flow-fill.flow-voided {
+  background: var(--bad);
+}
+@media (prefers-reduced-motion: reduce) {
+  .flow-fill,
+  .flow-node {
+    transition: none;
+  }
+}
+
+/* Dashboard: a changed metric rolls in instead of snapping. */
+.kpi-value {
+  animation: kpi-in 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@keyframes kpi-in {
+  from {
+    opacity: 0;
+    transform: translateY(40%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kpi-value {
+    animation: none;
+  }
+}
