@@ -12,6 +12,7 @@ import { MargaretsDay } from './v3/MargaretsDay';
 import { Trust } from './v3/Trust';
 import { FAQ } from './v3/faq';
 import { useActiveSection } from './v3/useActiveSection';
+import { useReveal } from './v3/useReveal';
 
 export const FTC_SOURCE =
   'https://www.ftc.gov/news-events/news/press-releases/2026/10/ftc-issues-annual-report-congress-agencys-actions-protect-older-adults';
@@ -40,13 +41,14 @@ function Section({
   children: React.ReactNode;
   muted?: boolean;
 }) {
+  const reveal = useReveal<HTMLDivElement>();
   return (
     <section
       id={id}
       aria-labelledby={`${id}-title`}
       className={`border-t border-[var(--gray-200)] ${muted ? 'bg-[var(--gray-25)]' : 'bg-white'}`}
     >
-      <div className="mx-auto max-w-6xl px-6 py-20">
+      <div ref={reveal} className="mx-auto max-w-6xl px-6 py-20">
         <p className="text-[13px] font-semibold text-[var(--brand)]">{eyebrow}</p>
         <h2
           id={`${id}-title`}
