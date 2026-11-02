@@ -80,3 +80,6 @@
   font-size: 12.5px;
   color: var(--gray-500);
 }
+
+.trust-step[data-step='capture'] .trust-index { border-color: #75e0a7; background: #ecfdf3; color: #067647; }
+.trust-step[data-step='void'] .trust-index { border-color: #fda29b; background: #fef3f2; color: #b42318; }
